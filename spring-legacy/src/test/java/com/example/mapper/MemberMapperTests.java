@@ -26,12 +26,12 @@ public class MemberMapperTests {
 		assertNotNull(memberMapper);
 
 		MemberVO memberVO = new MemberVO();
-		memberVO.setId("qqwweee");
+		memberVO.setId("eeee");
 
 		String hashedPw = BCrypt.hashpw("1234", BCrypt.gensalt());
 		memberVO.setPasswd(hashedPw);
 
-		memberVO.setName("호빵맨");
+		memberVO.setName("세균맨");
 		memberVO.setRegDate(new Date());
 
 		memberMapper.insert(memberVO);
