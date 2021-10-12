@@ -1,0 +1,28 @@
+package com.example.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+//예전에는 implements Controller 로 한 클래스당 1개의 기능만 했기때문에 이제는 사용하지 않음.
+// @Controller 애노테이션을 사용함.
+// @Component 계열 애노테이션이므로 스프링 빈이 됨.
+// 스프링의 프론트컨트롤러인 DispatcherServlet 객체가 사용할 컨트롤러가 됨.
+
+@Controller
+@RequestMapping("/member/*") // //member/에 관한 요청만 받을 수 있음.
+public class MemberController {
+	
+	@GetMapping("/join") // @RequestMapping "/member/"에  + "join"이 됨 // / 있어도 알아서 없애줌
+	public void joinForm() {
+		System.out.println("join 호출됨...");
+		
+		//return "member/join";
+		
+		// 컨트롤러 메소드의 리턴타입이 void일 경우는
+		// 요청 URL주소("/member/join")를 실행할 JSP 경로명("/member/join")으로 사용함.
+		// URL 요청 경로명과 JSP 경로명이 같을 경우 사용할 수 있다.
+	}
+
+}

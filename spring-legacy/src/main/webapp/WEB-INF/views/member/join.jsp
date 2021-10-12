@@ -33,7 +33,8 @@
 							<h5>회원가입</h5>
 							<div class="divider" style="margin: 30px 0;"></div>
 
-							<form action="/memberJoinPro.do" method="POST" id="frm"
+							<!-- POST형식으로 보내기 때문에 구분이 가능함 -> 같은 url로 가능함. -->
+							<form action="/member/join" method="POST" id="frm"
 								name="frm">
 								<div class="row">
 									<div class="input-field col s12 m9">
