@@ -1,9 +1,0 @@
-package com.example.controller;
-
-import org.springframework.stereotype.Controller;
-
-
-@Controller
-public class MemberController { // 예전에는 implements Controller 로 한 클래스당 1개의 기능만 했음
-
-}

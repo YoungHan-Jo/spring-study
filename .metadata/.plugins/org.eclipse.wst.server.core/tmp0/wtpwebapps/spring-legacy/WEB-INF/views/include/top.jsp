@@ -20,7 +20,8 @@ String id = (String) session.getAttribute("id");
 		<%
 		} else {
 		%>
-		<a href="/member/Logout">로그아웃</a>
+		<span><%=id %>님</span> 
+		<a href="/member/logout">로그아웃</a>
 		<%
 		}
 		%>

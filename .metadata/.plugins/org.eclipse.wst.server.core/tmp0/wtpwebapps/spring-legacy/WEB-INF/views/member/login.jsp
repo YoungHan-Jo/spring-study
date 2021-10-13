@@ -33,7 +33,7 @@
 							<h5>로그인</h5>
 							<div class="divider" style="margin: 30px 0;"></div>
 
-							<form action="/member/loginPro.jsp" method="POST">
+							<form action="/member/login" method="POST">
 								<div class="row">
 									<div class="input-field col s12">
 										<i class="material-icons prefix">account_circle</i> <input
@@ -52,7 +52,7 @@
 
 								<p class="row center">
 									<label> <input class="filled-in" type="checkbox"
-										name="rememberMe" /> <span>로그인 상태 유지</span>
+										name="rememberMe" value="true" /> <span>로그인 상태 유지</span>
 									</label>
 								</p>
 
