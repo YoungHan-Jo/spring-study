@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.AttachMapper">
+
+	<!-- foreach태그를 이용한 동적 sql -->
+	<insert id="addAttaches">
+		<![CDATA[
+			INSERT INTO attach (uuid, uploadpath, filename, filetype, bno)
+			VALUES 
+		]]>
+		<!-- List 형의  alias는 기본으로 설정되어있음 -->
+		<!-- collection: 받아오는 형식, item :하나하나의 명칭, separator: 아이템 하나하나 사이에 넣을 문자 -->
+		<foreach collection="list" item="attach" separator=",">
+			(#{attach.uuid}, #{attach.uploadpath}, #{attach.filename}, #{attach.filetype}, #{attach.bno})
+		</foreach>			
+	</insert>
+	
+	
+	<select id="getAttachesByUuids" resultType="AttachVO">
+		<![CDATA[
+			SELECT * 
+			FROM attach 
+			WHERE uuid IN
+		]]>
+		<!-- open: 반복문 앞에 쓸 문자열, close: 반복문 끝나고 쓸 문자열 -->
+		<foreach collection="list" item="uuid" open="(" separator="," close=")">
+			#{uuid}
+		</foreach>
+		
+	</select>
+
+</mapper>

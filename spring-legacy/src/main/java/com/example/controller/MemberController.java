@@ -12,7 +12,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -91,10 +93,34 @@ public class MemberController {
 
 	} // join
 
+	// servletrequest로 처리할 수 있으나 스프링은 request, response 객체 조작 최소화 해야함.
+	// 대신해서 Model 인터페이스를 이용해서 간접적으로 request 객체 컨트롤
+	@GetMapping("/joinIdDupChk")
+	public void joinIdDupChk(@ModelAttribute("id") String id, Model model) {
+		// @ModelAttribute(키 이름)
+		// 코딩 양은 비슷하지만 이런식으로 애노테이션을 걸어놓으면 외부에서 받은 값이라고 구분이 감.
+		// 권장하는 방법
+
+		// 아이디중복여부 확인
+		int count = memberService.getCountById(id);
+
+		// jsp에서 값을 이용할 수 있도록
+		model.addAttribute("count", count);
+		// model.addAttribute("id", id);
+		// request.addAttribute("count",count);
+		// request.addAttribute("id",id); // id는 외부 요청 request에서 받은 값 이지만
+		// requestScope로 사용하기 위해 다시 등록함, 
+		// 매개변수 애노테이션으로 할 수 있다.
+		
+		// 스프링에서는 request에 직접 데이터를 쓰지 않고
+		// Model 타입 객체에 데이터를 쓰면 request 영역객체에 데이터를 자동으로 옮겨줌.
+
+	} // joinIdDupChk
+
 	@GetMapping("/login")
 	public void loginForm() {
 		System.out.println("login 호출됨...");
-	}
+	} // loginForm
 
 	@PostMapping("login") // POST 요청 /member/login
 	public ResponseEntity<String> login(String id, String passwd,
@@ -162,7 +188,7 @@ public class MemberController {
 		session.invalidate();
 
 		Cookie[] cookies = request.getCookies();
-		
+
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals("loginId")) {

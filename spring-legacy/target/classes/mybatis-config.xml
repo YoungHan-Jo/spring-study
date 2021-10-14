@@ -17,4 +17,10 @@
 		
 	</settings>
 	
+	<!-- 경로 별칭을 사용하기 -->
+	<typeAliases>
+		<!-- 패키지 안에있는 클래스명으로만 쓸 수 있도록 alias가 자동으로 부여함. 첫글자 소문자/대문자 다 가능 -->
+		<package name="com.example.domain"/>
+	</typeAliases>
+	
 </configuration>

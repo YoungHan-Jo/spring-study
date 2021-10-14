@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.BoardMapper">
+
+	<delete id="deleteBoardByNum">
+		<!-- 이안에 내용은 순수 텍스트이다 라는것. <,> 등의 기호가 나올때 -->
+	<![CDATA[
+		DELETE FROM board WHERE num = #{num}	
+	]]>
+	</delete>
+
+	<!-- select 문장일때는 최종 반환할 자료형을 rusultType로 입력해 줘야함 -->
+	<select id="getCountAll" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) AS cnt
+			FROM board
+		]]>
+	</select>
+
+	<select id="getNextnum" resultType="int">
+		<![CDATA[
+			SELECT IFNULL(MAX(num),0) + 1 AS nextnum 
+			FROM board
+		]]>
+	</select>
+
+	<insert id="addBoard">
+		<![CDATA[
+			INSERT INTO board (num, mid, subject, content, readcount, reg_date, ipaddr, re_ref, re_lev, re_seq)
+			VALUES (#{num}, #{mid}, #{subject}, #{content}, #{readcount}, #{regDate}, #{ipaddr}, #{reRef}, #{reLev}, #{reSeq})
+		]]>
+	</insert>
+
+	<!-- xml 파일은 java파일이 아니라서 import 기능이 없음, 주소 풀네임으로 다 적어야 함 -->
+	<!-- 다 적으면 귀찮으니까, mybatis-config.xml에서 alias 설정 가능 -->
+	<!-- 반환값이 리스트면, 행 하나하나의 타입으로 설정하면됨. -->
+	<select id="getBoardsAll" resultType="BoardVO">
+		<![CDATA[
+			SELECT * 
+			FROM board 
+			ORDER BY re_ref DESC, re_seq ASC 
+		]]>
+	</select>
+
+	<select id="getBoardByNum" resultType="boardVO">
+		<![CDATA[
+			SELECT * 
+			FROM board 
+			WHERE num = #{num}
+		]]>
+	</select>
+
+	<update id="updateReadcount">
+		<![CDATA[
+			UPDATE board
+			SET readcount = readcount+1
+			WHERE num = #{num}
+		]]>
+	</update>
+
+	<update id="updateBoard">
+		<![CDATA[
+			UPDATE board 
+			SET subject = #{subject}, content = #{content}, ipaddr = #{ipaddr} 
+			WHERE num = #{num}
+		]]>
+	</update>
+
+	<update id="updateReSeqPlusOne">
+		<![CDATA[
+			UPDATE board
+			SET re_seq = re_seq + 1 
+			WHERE re_ref = #{reRef}
+			AND re_seq > #{reSeq}
+		]]>
+	</update>
+
+	<!-- 동적 sql -->
+	<select id="getCountBySearch" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) AS cnt
+			FROM board
+		]]>
+		<!-- 조건이 맞을 때만 where 조건절 실행 -->
+		<where>
+			<!-- type는 criteria의 gettype로 꺼낸 값, ${} 사용안함 -->
+			<if test="type == 'subject'.toString()">
+				<!-- #{keyword} 값 자체가 이미 ''로 씌어져 있음. sql의 concat 함수 이용 -->
+				subject LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="type == 'content'.toString()">
+				content LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="type == 'mid'.toString()">
+				mid LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+		</where>
+
+	</select>
+
+	<select id="getBoardsWithPaging" resultType="BoardVO">
+		<![CDATA[
+			SELECT *
+			FROM board
+		]]>
+		<where>
+			<!-- type는 criteria의 gettype로 꺼낸 값, ${} 사용안함 -->
+			<if test="type == 'subject'.toString()">
+				<!-- #{keyword} 값 자체가 이미 ''로 씌어져 있음. sql의 concat 함수 이용 -->
+				subject LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="type == 'content'.toString()">
+				content LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="type == 'mid'.toString()">
+				mid LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+		</where>
+		<![CDATA[
+			ORDER BY re_ref DESC, re_seq ASC
+			LIMIT #{startRow} , #{amount}
+		]]>
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

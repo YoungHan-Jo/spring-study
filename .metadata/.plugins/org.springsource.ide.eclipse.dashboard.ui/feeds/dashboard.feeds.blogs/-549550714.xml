@@ -5,7 +5,20 @@
   <link rel="self" href="https://spring.io/blog.atom" />
   <id>http://spring.io/blog.atom</id>
   <icon>https://spring.io/favicon.ico</icon>
-  <updated>2021-10-12T16:00:00Z</updated>
+  <updated>2021-10-13T07:00:00Z</updated>
+  <entry>
+    <title>Spring Tips: Spring Plugin</title>
+    <link rel="alternate" href="https://spring.io/blog/2021/10/13/spring-tips-spring-plugin" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Josh Long</name>
+    </author>
+    <id>tag:spring.io,2021-10-12:4566</id>
+    <updated>2021-10-13T07:00:00Z</updated>
+    <content type="html">&lt;p&gt;Hi, Spring fans! In this installment Josh Long (@starbuxman) looks at the little-known, often-used Spring Plugin project, which supports the strategy pattern&lt;/p&gt;
+&lt;iframe width="560" height="315" src="https://www.youtube.com/embed/GlV5sXdXPu4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
   <entry>
     <title>This Week in Spring - October 12th, 2021</title>
     <link rel="alternate" href="https://spring.io/blog/2021/10/12/this-week-in-spring-october-12th-2021" />
@@ -25,7 +38,7 @@
   &lt;li&gt;Do you want to get a Tanzu Kubernetes cluster up and running on your local machine? Now you can with Tanzu Community Edition. Check out this great tweet from &lt;a href="https://twitter.com/mcshauno/status/1445765785872486401?s=12"&gt;Shaun McDonnell &lt;/a&gt; showing how easy it is!&lt;/li&gt;
   &lt;li&gt;I will be speaking about creating edge services with GraphQL, reactive programming and Spring Cloud Gateway at Voxxed Days Romania on the 22/10/2021. I hope to see you there!&lt;/li&gt;
   &lt;li&gt;I&amp;rsquo;ll be speaking on &lt;a href="https://twitch.tv/vmwaretanzu"&gt;the VMware Tanzu Twitch channel (twitch.tv/vmwaretanzu)&lt;/a&gt; tomorrow in a sort of grab bag installment of Spring Tips! Join me, bring your questions, and let&amp;rsquo;s build some cool stuff.&lt;/li&gt;
-  &lt;li&gt;I was very sad to see Oleh leave the GraalVM team, but I&amp;rsquo;m thrilled to see him join the new company around TestContainers, &lt;a href="https://link.medium.com/sIUpb7dKdkb"&gt;AtomicJar&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;I was very sad to see Oleg leave the GraalVM team, but I&amp;rsquo;m thrilled to see him join the new company around TestContainers, &lt;a href="https://link.medium.com/sIUpb7dKdkb"&gt;AtomicJar&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href="https://spring.io/blog/2021/10/07/a-bootiful-podcast-heiko-scherrer-on-openwms-spring-spring-boot-spring-data-workflow-with-activiti-and-more"&gt;A Bootiful Podcast: Heiko Scherrer on OpenWMS, Spring, Spring Boot, Spring Data, workflow with Activiti and more&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;want to manage federations of Kubernetes clusters? Then this new &lt;code&gt;kind&lt;/code&gt; is for you! &lt;a href="https://kubernetes.io/blog/2021/10/08/capi-clusterclass-and-managed-topologies/"&gt;Introducing ClusterClass and Managed Topologies in Cluster API&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href="https://link.medium.com/vO84zgbKdkb"&gt;Codelab: Spring Cloud GCP with Cloud SQL&lt;/a&gt;&lt;/li&gt;
@@ -934,19 +947,6 @@ Let me know if you would like me to cover specific topics.&lt;/p&gt;
   &lt;li&gt;Spring Data Elasticsearch 4.3 M3 - &lt;a href="https://repo.spring.io/libs-milestone/org/springframework/data/spring-data-elasticsearch/4.3.0-M3"&gt;Artifacts&lt;/a&gt; - &lt;a href="https://docs.spring.io/spring-data/elasticsearch/docs/4.3.0-M3/api"&gt;Javadoc&lt;/a&gt; - &lt;a href="https://docs.spring.io/spring-data/elasticsearch/docs/4.3.0-M3/reference/html"&gt;Documentation&lt;/a&gt; - &lt;a href="https://github.com/spring-projects/spring-data-elasticsearch/releases/tag/4.3.0-M3"&gt;Changelog&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;Spring Data Couchbase 4.3 M3 - &lt;a href="https://repo.spring.io/libs-milestone/org/springframework/data/spring-data-couchbase/4.3.0-M3"&gt;Artifacts&lt;/a&gt; - &lt;a href="https://docs.spring.io/spring-data/couchbase/docs/4.3.0-M3/api"&gt;Javadoc&lt;/a&gt; - &lt;a href="https://docs.spring.io/spring-data/couchbase/docs/4.3.0-M3/reference/html"&gt;Documentation&lt;/a&gt; - &lt;a href="https://github.com/spring-projects/spring-data-couchbase/releases/tag/4.3.0-M3"&gt;Changelog&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>A Bootiful Podcast: Dr. Mark Pollack on Physics, Spring Cloud Data Flow, Spring Data, Spring.NET, Spring XD, and so much more</title>
-    <link rel="alternate" href="https://spring.io/blog/2021/09/16/a-bootiful-podcast-dr-mark-pollack-on-physics-spring-cloud-data-flow-spring-data-spring-net-spring-xd-and-so-much-more" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2021-09-17:4547</id>
-    <updated>2021-09-17T04:00:00Z</updated>
-    <content type="html">&lt;p&gt;Hi, Spring fans! Welcome to another installment of &lt;em&gt;A Bootiful Podcast&lt;/em&gt;. In this installment, &lt;a href="http://twitter.com/starbuxman"&gt;Josh Long (@starbuxman)&lt;/a&gt; talks to the one, the only, the amazing and &lt;a href="https://twitter.com/MarkPollack"&gt;inimitable Dr. Mark Pollack (@MarkPollack)&lt;/a&gt; about physics, Spring.NET, Spring Data, Spring XD, Spring Cloud Data Flow, and so much more! &lt;/p&gt;
-&lt;iframe title="The Good Dr. Mark Pollack on Spring.NET, physics, Spring Data, Spring XD, Spring Cloud Data Flow, and so much more" allowtransparency="true" height="150" width="100%" style="border: none; min-width: min(100%, 430px);" scrolling="no" data-name="pb-iframe-player" src="https://www.podbean.com/player-v2/?i=f8shp-10e0e12-pb&amp;from=pb6admin&amp;share=1&amp;download=1&amp;rtl=0&amp;fonts=Arial&amp;skin=1&amp;font-color=auto&amp;btn-skin=7"&gt;&lt;/iframe&gt;
 &lt;!-- rendered by Sagan Renderer Service --&gt;</content>
   </entry>
 </feed>

@@ -37,12 +37,9 @@
 	<tx:annotation-driven/>
 	
 	
-	
-	
 	<!-- 기준패키지에 있는 mapper 인터페이스는 스캔에 의해서 DAO와 같은 구현된 클래스로 자동 변환되고
 	     스프링이 관리하는 객체(빈)으로 준비됨. 의존관계 주입이 가능함. -->
 	<mybatis-spring:scan base-package="com.example.mapper"/>
-	
 	
 	<!-- @Component 계열 클래스를 스캔해서 스프링 빈으로 등록하고 의존관계 주입시킴 -->
 	<context:component-scan base-package="com.example.myapp"/>
