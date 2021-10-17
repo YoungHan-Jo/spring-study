@@ -22,10 +22,15 @@ public interface MemberMapper {
 
 	@Delete("DELETE FROM member WHERE id = #{id} ")
 	int deleteById(String id);
-
-	@Update("UPDATE member  "
-			+ " SET name = #{name}, birthday = #{birthday}, gender = #{gender}, email = #{email}, recv_email = #{recvEmail}, reg_date = #{regDate} "
+	
+	@Update("UPDATE member "
+			+ " SET passwd = #{passwd}"
 			+ " WHERE id = #{id} ")
+	void modifyPasswd(MemberVO memberVO);
+
+	@Update("UPDATE member "
+			+ "SET name = #{name}, birthday = #{birthday}, gender = #{gender}, email = #{email}, recv_email = #{recvEmail}, reg_date = #{regDate} "
+			+ "WHERE id = #{id} ")
 	void updateById(MemberVO memberVO);
 	
 	@Select("SELECT count(*) AS cnt FROM member WHERE id = #{id}")

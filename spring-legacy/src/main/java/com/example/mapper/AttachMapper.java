@@ -22,8 +22,18 @@ public interface AttachMapper {
 	@Select("SELECT * FROM attach WHERE uuid = #{uuid}")
 	AttachVO getAttachByUuid(String uuid);
 
-	
-	
 	List<AttachVO> getAttachesByUuids(List<String> uuidList);
+	
+	List<AttachVO> getAttachesByBno(int bno);
+	
+	@Select("SELECT * FROM attach WHERE uploadpath = #{uploadpath}")
+	List<AttachVO> getAttachesByUploadpath(String uploadpath);
+	
+	@Delete("DELETE FROM attach WHERE bno = #{bno}")
+	void deleteAttachesByBno(int bno);
+	
+	@Delete("DELETE FROM attach WHERE uuid = #{uuid}")
+	void deleteAttachesByUuid(String uuid);
+	
 	
 }

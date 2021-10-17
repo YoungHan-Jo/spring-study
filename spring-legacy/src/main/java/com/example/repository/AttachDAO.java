@@ -3,13 +3,10 @@ package com.example.repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.example.domain.AttachVO;
-import com.example.domain.BoardVO;
-import com.example.domain.Criteria;
 
 public class AttachDAO {
 

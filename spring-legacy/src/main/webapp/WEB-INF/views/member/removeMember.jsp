@@ -2,11 +2,6 @@
 	pageEncoding="UTF-8"%>
 
 
-<%
-String id = (String) session.getAttribute("id");
-%>
-
-
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -39,12 +34,12 @@ String id = (String) session.getAttribute("id");
 							<h5>회원탈퇴</h5>
 							<div class="divider" style="margin: 30px 0;"></div>
 
-							<form action="/member/removeMemberPro.jsp" method="POST" id="frm">
+							<form action="/member/remove" method="POST" id="frm">
 								<div class="row">
 									<div class="input-field col s12">
 										<i class="material-icons prefix">account_box</i> <input
 											id="id" type="text" name='id'
-											value="<%=id%>" readonly> <label for="id">아이디</label>
+											value="${ sessionScope.id }" readonly> <label for="id">아이디</label>
 									</div>
 								</div>
 
@@ -93,6 +88,7 @@ String id = (String) session.getAttribute("id");
 
 			if (isDelete == false) {
 				event.preventDefault();
+				/* form태그 a태그만 기본동작이 있기때문에 기본동작 막을 때 쓸 수 있음 */
 			}
 
 		})

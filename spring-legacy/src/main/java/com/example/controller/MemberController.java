@@ -109,9 +109,9 @@ public class MemberController {
 		// model.addAttribute("id", id);
 		// request.addAttribute("count",count);
 		// request.addAttribute("id",id); // id는 외부 요청 request에서 받은 값 이지만
-		// requestScope로 사용하기 위해 다시 등록함, 
+		// requestScope로 사용하기 위해 다시 등록함,
 		// 매개변수 애노테이션으로 할 수 있다.
-		
+
 		// 스프링에서는 request에 직접 데이터를 쓰지 않고
 		// Model 타입 객체에 데이터를 쓰면 request 영역객체에 데이터를 자동으로 옮겨줌.
 
@@ -181,6 +181,158 @@ public class MemberController {
 		return new ResponseEntity<String>(headers, HttpStatus.FOUND);
 
 	} // login
+
+	@GetMapping("/passwd")
+	public void modifyPasswdForm() {
+
+	}
+
+	@PostMapping("/passwd")
+	public ResponseEntity<String> modifyPasswd(HttpSession session, String passwd, String newPasswd,
+			HttpServletResponse response) {
+		String id = (String) session.getAttribute("id");
+
+		MemberVO memberVO = memberService.getMemberById(id);
+
+		boolean isPasswdSame = BCrypt.checkpw(passwd, memberVO.getPasswd());
+
+		String message;
+
+		if (isPasswdSame) { // 현재 비밀번호 일치
+
+			String hashpw = BCrypt.hashpw(newPasswd, BCrypt.gensalt());
+
+			memberVO.setPasswd(hashpw);
+
+			memberService.modifyPasswd(memberVO);
+
+		} else { // 현재 비밀번호 불일치
+			message = "현재 비밀번호가 일치하지 않습니다.";
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Type", "text/html; charset=UTF-8");
+
+			String str = JScript.back(message);
+			return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+		}
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "text/html; charset=UTF-8");
+
+		String str = JScript.href("비밀번호 변경 완료. 새 비밀번호로 다시 로그인 하세요", "/member/logout");
+
+		return new ResponseEntity<String>(str, headers, HttpStatus.FOUND);
+	}
+
+	@GetMapping("/modify") // GET - "/member/modify"
+	public String modifyMemberForm(HttpSession session, Model model) throws Exception {
+		// 예외는 전부 던지면 spring 이 알아서 처리해줌
+
+		String id = (String) session.getAttribute("id");
+		MemberVO memberVO = memberService.getMemberById(id);
+
+//		String birthday = memberVO.getBirthday(); // '20020101' -> '2002-01-01'
+//
+//		// String -> Date 객체 변환
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+//		Date date = sdf.parse(birthday);
+//
+//		//Date 객체 - > String
+//		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+//		String strBirthday = sdf2.format(date);
+//		memberVO.setBirthday(strBirthday);
+
+		model.addAttribute("member", memberVO);
+
+		return "/member/modifyMember";
+	} // modifyMemberForm
+
+	@PostMapping("/modify")
+	public ResponseEntity<String> modifyMember(MemberVO memberVO, HttpSession session) {
+		String id = (String) session.getAttribute("id");
+
+		MemberVO dbMemberVO = memberService.getMemberById(id);
+
+		boolean isPasswdSame = BCrypt.checkpw(memberVO.getPasswd(), dbMemberVO.getPasswd());
+
+		if (isPasswdSame == false) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Type", "text/html; charset=UTF-8");
+
+			String str = JScript.back("비밀번호가 일치하지 않습니다.");
+
+			return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+		}
+
+		// 생년월일 '-' 제거
+		String birthday = memberVO.getBirthday();
+		birthday = birthday.replace("-", "");
+		memberVO.setBirthday(birthday);
+
+		System.out.println(memberVO.toString());
+
+		memberService.updateById(memberVO);
+
+		System.out.println(dbMemberVO.toString());
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "text/html; charset=UTF-8");
+
+		String str = JScript.href("회원정보 수정 완료", "/");
+
+		return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+	}
+
+	@GetMapping("/remove")
+	public String removeMemberForm() {
+		return "/member/removeMember";
+	}
+
+	@PostMapping("/remove")
+	public ResponseEntity<String> removeMember(HttpSession session, String passwd, HttpServletRequest request,
+			HttpServletResponse response) {
+
+		String id = (String) session.getAttribute("id");
+
+		MemberVO memberVO = memberService.getMemberById(id);
+
+		boolean isPasswdSame = BCrypt.checkpw(passwd, memberVO.getPasswd());
+
+		if (isPasswdSame == false) { // 비밀번호 불일치
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Type", "text/html; charset=UTF-8");
+
+			String str = JScript.back("비밀번호가 일치하지 않습니다.");
+
+			return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+		}
+
+		memberService.deleteById(id);
+
+		// 세션 비우기
+		session.invalidate();
+
+		// 쿠키 비우기
+		Cookie[] cookies = request.getCookies();
+
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("loginId")) {
+					cookie.setMaxAge(0);
+					cookie.setPath("/");
+					response.addCookie(cookie);
+				}
+			}
+		}
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "text/html; charset=UTF-8");
+
+		String str = JScript.href("회원탈퇴 완료.", "/");
+
+		return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+	} // removeMember
 
 	@GetMapping("/logout")
 	public String logout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {

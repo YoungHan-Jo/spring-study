@@ -6,6 +6,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class Criteria {
+	// sql에서 사용할 변수들 모음
 
 	private int pageNum; // 페이지번호
 	private int amount; // 한 페이지당 글 개수
@@ -15,6 +16,9 @@ public class Criteria {
 	private String type = ""; // 검색 유형
 	private String keyword = ""; // 검색어
 
+	
+	//setter로 값을 아무것도 찾지 못해도 일단 기본 생성자로 호출 함
+	// 기본생성자 생성 후 값이 있으면 setter로 수정함 
 	public Criteria() {
 		this(1, 10);
 	}

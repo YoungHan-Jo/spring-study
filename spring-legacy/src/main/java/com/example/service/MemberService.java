@@ -30,6 +30,10 @@ public class MemberService {
 		return memberMapper.deleteById(id);
 	}
 	
+	public void modifyPasswd(MemberVO memberVO) {
+		memberMapper.modifyPasswd(memberVO);
+	}
+	
 	public void updateById(MemberVO memberVO) {
 		memberMapper.updateById(memberVO);
 	}

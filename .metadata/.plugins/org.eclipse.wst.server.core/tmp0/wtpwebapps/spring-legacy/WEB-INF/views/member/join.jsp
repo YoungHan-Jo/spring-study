@@ -157,7 +157,6 @@
 			// id 중복확인 자식창 열기
 			open('/member/joinIdDupChk?id='+id,'idDupChk','width=500, height=400');
 			//open(주소, 창 이름, 부가설정)
-			
 		})
 		
 		$('input#id').on('keyup',function(){
