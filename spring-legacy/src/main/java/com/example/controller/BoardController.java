@@ -61,11 +61,13 @@ public class BoardController {
 		// 조회수 1 증가시키기
 		boardService.updateReadcount(num);
 		
-		//상세보기 할 글 한개 가져오기
-		BoardVO boardVO = boardService.getBoardByNum(num);
+//		//상세보기 할 글 한개 가져오기
+//		BoardVO boardVO = boardService.getBoardByNum(num);
+//		// 첨부파일 정보리스트 가져오기
+//		List<AttachVO> attachList = attachService.getAttachesByBno(num);
 		
-		// 첨부파일 정보리스트 가져오기
-		List<AttachVO> attachList = attachService.getAttachesByBno(num);
+		// join 쿼리문으로 게시판 글 + 첨부파일 리스트 정보 한번에 가져오기
+		BoardVO boardVO = boardService.getBoardAndAttaches(num);
 		
 		model.addAttribute("board", boardVO);
 		model.addAttribute("attachList", attachList);

@@ -50,6 +50,8 @@ public interface BoardMapper {
 	//페이징으로 글 가져오기
 	List<BoardVO> getBoardsWithPaging(Criteria cri);
 	
+	// join 쿼리로 게시글,첨부파일 가져오기
+	BoardVO getBoardAndAttaches(int num);
 	
 	
 	

@@ -59,6 +59,18 @@ public class BoardService {
 		return boardMapper.getBoardByNum(num);
 	}
 	
+	public BoardVO getBoardAndAttaches(int num) {
+		// join없이 하는 방법
+//		BoardVO boardVO = boardMapper.getBoardByNum(num);
+//		List<AttachVO> attachList = attachMapper.getAttachesByBno(num);
+//		boardVO.setAttachList(attachList);
+//		return boardVO; 
+		
+		// join 쿼리로 데이터 가져오기
+		BoardVO boardVO = boardMapper.getBoardAndAttaches(num); 
+		
+		return boardVO;
+	}
 
 	
 

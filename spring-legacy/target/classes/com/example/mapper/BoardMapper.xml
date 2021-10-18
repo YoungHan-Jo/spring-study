@@ -124,6 +124,30 @@
 		]]>
 	</select>
 
+	<!-- 새로운 컬럼이 추가되어도 에러가 나지 않도록 컬럼 하나하나 전부 명시해줌 -->
+	<!-- attachVO도 있기때문에 resultMap 사용 -->
+	<select id="getBoardAndAttaches" resultMap="boardAndAttaches">
+		<![CDATA[
+			SELECT b.num, b.mid, b.subject, b.content, b.readcount, b.reg_date, 
+				   b.ipaddr, b.re_ref, b.re_lev, b.re_seq,
+				   a.uuid, a.uploadpath, a.filename, a.filetype, a.bno
+			FROM board b
+			LEFT OUTER JOIN attach a
+			ON b.num = a.bno
+			WHERE b.num = #{num}
+		]]>
+	</select>
+	<!-- property는 VO에 set 하는거처럼. -->
+	<resultMap type="boardVO" id="boardAndAttaches">
+		<id column="num" property="num"/>
+		<result column="mid" property="mid"/>
+		<result column="subject" property="subject"/>
+		<result column="content" property="content"/>
+		<result column="readcount" property="readcount"/>
+		<result column="reg_date" property="regDate"/>
+	
+	
+	</resultMap>
 
 
 
