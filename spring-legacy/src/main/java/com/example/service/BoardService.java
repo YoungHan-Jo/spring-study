@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.domain.AttachVO;
 import com.example.domain.BoardVO;
 import com.example.domain.Criteria;
 import com.example.mapper.AttachMapper;
@@ -22,23 +23,43 @@ public class BoardService {
 	private BoardMapper boardMapper;
 	private AttachMapper attachMapper;
 
-	// 생성자로 의존객체를 받도록 선언하면 @Autowired 애노테이션 생략가능 
+	// 생성자로 의존객체를 받도록 선언하면 @Autowired 애노테이션 생략가능
 	public BoardService(BoardMapper boardMapper, AttachMapper attachMapper) {
 		this.boardMapper = boardMapper;
 		this.attachMapper = attachMapper;
 	}
+
 	// 페이징,검색어 적용하여 글 리스트 가져오기
-	public List<BoardVO> getBoardsByCri(Criteria cri){
+	public List<BoardVO> getBoardsByCri(Criteria cri) {
+
+		// 1페이지 0행부터
+		// 2페이지 10행부터 시작
+		// 3페이지 20행부터 시작
+		// 4페이지 30행부터 시작
+		int startRow = (cri.getPageNum() - 1) * cri.getAmount();
+		
+		cri.setStartRow(startRow);
+		
 		List<BoardVO> boardList = boardMapper.getBoardsWithPaging(cri);
-		return boardList; 
-	}
-	
+		return boardList;
+	} //getBoardsByCri
+
 	// 페이징, 검색어 적용해여 글 개수 가져오기
 	public int getCountBySearch(Criteria cri) {
 		int count = boardMapper.getCountBySearch(cri);
 		return count;
+	} //getCountBySearch
+	
+	public // 조회수 1증가
+	void updateReadcount(int num) {
+		boardMapper.updateReadcount(num);
 	}
 	
+	public BoardVO getBoardByNum(int num) {	
+		return boardMapper.getBoardByNum(num);
+	}
 	
 
-}
+	
+
+} // end of class

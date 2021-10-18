@@ -27,11 +27,7 @@ public class Criteria {
 		super();
 		this.pageNum = pageNum;
 		this.amount = amount;
-
-		// 1페이지 0행부터
-		// 2페이지 10행부터 시작
-		// 3페이지 20행부터 시작
-		// 4페이지 30행부터 시작
-		this.startRow = (this.pageNum - 1) * this.amount;
 	}// 생성자
+	
+	
 }

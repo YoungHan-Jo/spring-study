@@ -1,40 +1,10 @@
-<%@page import="com.example.domain.AttachVO"%>
-<%@page import="java.util.List"%>
-<%@page import="com.example.repository.AttachDAO"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="com.example.domain.BoardVO"%>
-<%@page import="com.example.repository.BoardDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<!-- functions태그는 String, Array, Collection 객체에 관한 fn 태그 선언 -->
 
-<%
-String id = (String) session.getAttribute("id");
-%>
-<%
-// 상세보기 글 번호 파라미터값 가져오기
-//location.href='/board/boardContent.jsp?num=<%=boardVO.getNum()
-int num = Integer.parseInt(request.getParameter("num"));
-
-String pageNum = request.getParameter("pageNum");
-
-//DAO객체 준비
-BoardDAO boardDAO = BoardDAO.getInstance();
-AttachDAO attachDAO = AttachDAO.getInstance();
-
-//조회수 1증가
-boardDAO.updateReadcount(num);
-
-// 상세보기 할 글 한개 가져오기
-BoardVO boardVO = boardDAO.getBoardByNum(num);
-
-// 글 작성 날짜형식
-SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-
-// 첨부파일 정보리스트 가져오기
-List<AttachVO> attachList = attachDAO.getAttachesByBno(num);
-
-
-%>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -75,15 +45,16 @@ time.comment-date {
 							<table class="striped" id="boardList">
 								<tr>
 									<th class="center-align">제목</th>
-									<td colspan="5"><%=boardVO.getSubject()%></td>
+									<td colspan="5">${ board.subject }</td>
 								</tr>
 								<tr>
 									<th class="center-align">작성자</th>
-									<td><%=boardVO.getMid()%></td>
+									<td>${ board.mid }</td>
 									<th class="center-align">작성일</th>
-									<td><%=sdf.format(boardVO.getRegDate())%></td>
+									<td><fmt:formatDate value="${ board.regDate }"
+											pattern="yyyy.MM.dd HH:mm:ss" /></td>
 									<th class="center-align">조회수</th>
-									<td><%=boardVO.getReadcount()%></td>
+									<td>${ board.readcount }</td>
 								</tr>
 								<tr>
 									<th class="center-align">추천</th>
@@ -96,90 +67,70 @@ time.comment-date {
 								<tr>
 									<th class="center-align">내용</th>
 									<td colspan="5"><pre>
-									<%=boardVO.getContent()%>
+									${ board.content }
 									</pre></td>
 								</tr>
 								<tr>
 									<th class="center-align">첨부파일</th>
-									<td colspan="5">
-										<%
-										if(attachList.size() > 0){ // 첨부 파일이 있으면
-											%>
-											<ul>
-											<%
-											for(AttachVO attach : attachList){
-												if(attach.getFiletype().equals("O")){ // 일반 파일
-													//파일 이름 경로
-													String fileCallPath = attach.getUploadpath() + "/" + attach.getFilename();
-													%>
-													<li>
-														<a href="/board/download.jsp?fileName=<%=fileCallPath %>">
-															<i class="material-icons">file_present</i>
-															<%=attach.getFilename() %>
-														</a>
-													</li>
-													<%	
-												}else if(attach.getFiletype().equals("I")) { // 이미지파일
-					                   				// 썸네일 이미지 경로
-					                   				String fileCallPath = attach.getUploadpath() + "/s_" + attach.getFilename();
-					                   				// 원본 이미지 경로
-					                   				String fileCallPathOrigin = attach.getUploadpath() + "/" + attach.getFilename();
-					                   				%>
-					                       			<li>
-					                       				<a href="/board/download.jsp?fileName=<%=fileCallPathOrigin %>">
-					                       					<img src="/board/display.jsp?fileName=<%=fileCallPath %>">
-					                       				</a>
-					                       			</li>
-					                       			<%
-												}
-	
-											}
-											%>
-											</ul>
-											<%
+											<!-- test="${ attachCount gt 0 }" -->
+									<td colspan="5"><c:choose>
+											
+											<c:when test="${ fn:length(attachList) gt 0 }">
+												<c:forEach var="attach" items="${ attachList }">
 
-										}else{ // 첨부파일이 없으면
-											%>
-											첨부파일 없음
-											<%
-										}
-		
-										%>
-									
-									</td>
+													<c:if test="${ attach.filetype eq 'O' }">
+														<!-- 일반파일 -->
+														<!-- 다운로드할 일반파일 경로 변수 만들기 pageScope로 저장 -->
+														<c:set var="fileCallPath"
+															value="${ attach.uploadpath }/${ attach.filename }" />
+														<li><a href="/download?fileName=${ fileCallPath }">
+																<i class="material-icons">file_present</i> ${ attach.filename }
+														</a></li>
+													</c:if>
+													<c:if test="${ attach.filetype eq 'I' }">
+														<!-- 이미지파일 -->
+														<c:set var="fileCallPath"
+															value="${ attach.uploadpath }/s_${ attach.filename }" />
+														<c:set var="fileCallPathOrigin"
+															value="${ attach.uploadpath }/${ attach.filename }" />
+														<li><a
+															href="/download?fileName=${ fileCallPathOrigin }"> <img
+																src="/display?fileName=${ fileCallPath }">
+														</a></li>
+													</c:if>
+												</c:forEach>
+											</c:when>
+											<c:otherwise>
+												첨부파일 없음
+											</c:otherwise>
+										</c:choose></td>
 								</tr>
 							</table>
-
 
 							<div class="section">
 								<div class="row">
 									<div class="col s12 right-align">
 
-										<%
-										if (id != null) {
-										
-											if(id.equals(boardVO.getMid())){ //로그인
-												%>
-												<a class="btn waves-effect waves-light" href="/board/boardModify.jsp?num=<%=boardVO.getNum() %>&pageNum=<%=pageNum %>"> <i
-												class="material-icons left">edit</i>글수정
-												</a> 
-												<a class="btn waves-effect waves-light" onclick="remove(event)"> <i
-													class="material-icons left">delete</i>글삭제
+										<!-- 로그인 했을 때 -->
+										<c:if test="${ not empty sessionScope.id }">
+											<c:if test="${ sessionScope.id eq board.mid }">
+												<a class="btn waves-effect waves-light"
+													href="/board/modify?num=${ board.num }&pageNum=${ pageNum }">
+													<i class="material-icons left">edit</i>글수정
 												</a>
-												<%
-											}
-											%>
-											<a class="btn waves-effect waves-light" 
-											href="/board/replyWrite.jsp?reRef=<%=boardVO.getReRef() %>&reLev=<%=boardVO.getReLev()%>&reSeq=<%=boardVO.getReSeq()%>&pageNum=<%=pageNum %>"> 
-											<i class="material-icons left">reply</i>답글
-											</a>
+												<a class="btn waves-effect waves-light"
+													onclick="remove(event)"> <i class="material-icons left">delete</i>글삭제
+												</a>
+											</c:if>
 
-										<%
-										}
-										%>
+											<a class="btn waves-effect waves-light"
+												href="/board/reply?reRef=${ board.reRef }&reLev=${ board.reLev }&reSeq=${ board.reSeq }&pageNum=${ pageNum }">
+												<i class="material-icons left">reply</i>답글
+											</a>
+										</c:if>
 
 										<a class="btn waves-effect waves-light"
-											href="/board/boardList.jsp?pageNum=<%=pageNum%>"> <i
+											href="/board/list?pageNum=${ pageNum }"> <i
 											class="material-icons left">list</i>글목록
 										</a>
 									</div>
@@ -343,18 +294,18 @@ time.comment-date {
 	<!-- footer area -->
 	<jsp:include page="/WEB-INF/views/include/bottom.jsp" />
 	<!-- end of footer area -->
-	
+
 	<script>
-	//글 삭제 버튼을 클릭하면 호출되는 함수
-	function remove(event){
-		event.preventDefault();
-		
-		var isRemove = confirm('게시글을 삭제하시겠습니까?');
-		if(isRemove == true){
-			location.href = '/board/boardRemove.jsp?num=<%=boardVO.getNum() %>&pageNum=<%=pageNum %>';
+		//글 삭제 버튼을 클릭하면 호출되는 함수
+		function remove(event) {
+			event.preventDefault();
+
+			var isRemove = confirm('게시글을 삭제하시겠습니까?');
+			if (isRemove == true) {
+				/* 스크립트 영역에서도 el언어 사용가능, el언어는 jsp 읽을 때 제일 처음으로 동작함 */
+				location.href = '/board/remove?num=${ board.num }&pageNum=${ pageNum }';
+			}
 		}
-	}
-	
 	</script>
 
 

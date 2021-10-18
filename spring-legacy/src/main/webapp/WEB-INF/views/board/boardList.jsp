@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
@@ -75,15 +75,17 @@ table#board span.reply-level {
 												<tr
 													onclick="location.href='/board/content?num=${ board.num }&pageNum=${ pageMaker.cri.pageNum }'">
 													<td class="center-align">${ board.num }</td>
-													<td><c:if test="${ board.reLev gt 0 }">
+													<td>
+														<c:if test="${ board.reLev gt 0 }">
 															<span class="reply-level"
 																style="width: ${ board.reLev * 15 }px"></span>
 															<i class="material-icons">subdirectory_arrow_right</i>
-														</c:if> ${ board.subject }</td>
+														</c:if>
+														${ board.subject }
+													</td>
 													<td class="center-align">${ board.mid }</td>
 													<!-- fmt에서 var 속성을 입력하지 않으면 그대로 출력함 -->
-													<td class="center-align"><fmt:formatDate
-															value="${ board.regDate }" pattern="yyyy.MM.dd" /></td>
+													<td class="center-align"><fmt:formatDate value="${ board.regDate }" pattern="yyyy.MM.dd" /></td>
 													<td class="center-align">${ board.readcount }</td>
 												</tr>
 											</c:forEach>
@@ -102,52 +104,42 @@ table#board span.reply-level {
 								<!-- 이전 버튼 -->
 								<!-- isPrev 이라서 그냥 get이랑 똑같은 방식으로 생략 하면 됨 -->
 								<!-- 자체가 if 문이라서 eq true 생략가능 -->
+								<!-- 링크 뒤의 #board는 id가 board인 태그위치로 이동 -->
 								<c:if test="${ pageMaker.prev eq true }">
 									<li class="waves-effect"><a
 										href="/board/list?pageNum=${ pageMaker.startPage - 1 }&type=${ pageMaker.cri.type }&keyword=${ pageMaker.cri.keyword }#board"><i
 											class="material-icons">chevron_left</i></a></li>
 								</c:if>
-
-								<%
-								//페이지블록 내 최대 5개씩 출력
-								for (int i = pageDTO.getStartPage(); i <= pageDTO.getEndPage(); ++i) {
-								%>
-								<li
-									class="waves-effect <%=pageDTO.getCri().getPageNum() == i ? "active" : ""%>"><a
-									href="/board/boardList.jsp?pageNum=<%=i%>&type=<%=pageDTO.getCri().getType()%>&keyword=<%=pageDTO.getCri().getKeyword()%>#board"><%=i%></a></li>
-								<%
-								}
-								%>
-								<%
-								// 다음 버튼
-								//불리언은 is변수명 가능
-								if (pageDTO.isNext()) {
-								%>
-								<li class="waves-effect"><a
-									href="/board/boardList.jsp?pageNum=<%=pageDTO.getEndPage() + 1%>&type=<%=pageDTO.getCri().getType()%>&keyword=<%=pageDTO.getCri().getKeyword()%>#board"><i
+								
+								<!-- 페이지 블록 내 최대 5개 페이지 출력 -->
+								<!-- 기본 for문 begin:시작값, end:끝값, step:증감 -->
+								<!-- var 는 pageScope에 저장됨 -->
+								<c:forEach var="i" begin="${ pageMaker.startPage }" end="${ pageMaker.endPage }" step="1">
+									<li
+									class="waves-effect ${ pageMaker.cri.pageNum eq i ? 'active' : '' }"><a
+									href="/board/list?pageNum=${ pageScope.i }&type=${ pageMaker.cri.type }&keyword=${ pageMaker.cri.keyword }#board">${ i }</a></li>
+								</c:forEach>
+								
+								<!-- 다음 버튼 -->
+								<c:if test="${ pageMaker.next eq true }">
+									<li class="waves-effect"><a
+									href="/board/list?pageNum=${ pageMaker.endPage + 1 }&type=${ pageMaker.cri.type }&keyword=${ pageMaker.cri.keyword }#board"><i
 										class="material-icons">chevron_right</i></a></li>
-								<%
-								}
-								%>
-
-
+								</c:if>
 							</ul>
 
 							<div class="divider" style="margin: 30px 0;"></div>
 
-							<form action="/board/boardList.jsp" method="GET" id="frm">
+							<form action="/board/list" method="GET" id="frm">
 								<div class="row">
 									<div class="col s12 l4">
 										<div class="input-field">
 											<i class="material-icons prefix">find_in_page</i> <select
 												name="type">
 												<option value="" disabled selected>--</option>
-												<option value="subject"
-													<%=(pageDTO.getCri().getType().equals("subject")) ? "selected" : ""%>>제목</option>
-												<option value="content"
-													<%=(pageDTO.getCri().getType().equals("content")) ? "selected" : ""%>>내용</option>
-												<option value="mid"
-													<%=(pageDTO.getCri().getType().equals("mid")) ? "selected" : ""%>>작성자</option>
+												<option value="subject" ${ pageMaker.cri.type eq 'subject' ? 'selected' : '' }>제목</option>
+												<option value="content" ${ pageMaker.cri.type eq 'content' ? 'selected' : '' }>내용</option>
+												<option value="mid" ${ pageMaker.cri.type eq 'mid' ? 'selected' : '' }>작성자</option>
 											</select> <label>검색 조건</label>
 										</div>
 									</div>
@@ -157,7 +149,7 @@ table#board span.reply-level {
 										<div class="input-field">
 											<i class="material-icons prefix">search</i> <input
 												type="text" id="autocomplete-input" class="autocomplete"
-												name="keyword" value="<%=pageDTO.getCri().getKeyword()%>">
+												name="keyword" value="${ pageMaker.cri.keyword }">
 											<label for="autocomplete-input">검색어</label>
 										</div>
 										<!-- end of AutoComplete -->
@@ -194,7 +186,7 @@ table#board span.reply-level {
 			// 폼 태그의 쿼리들을 문자열로 한번에 가져옴. // type=subject&keyword=답글
 			var query = $('#frm').serialize();
 
-			location.href = '/board/boardList.jsp?' + query + '#board';
+			location.href = '/board/list?' + query + '#board';
 		})
 	</script>
 </body>
