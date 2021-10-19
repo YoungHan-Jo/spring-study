@@ -44,4 +44,8 @@ public interface MemberMapper {
 	
 	@Select("SELECT * FROM member ORDER BY id")
 	List<MemberVO> getMembers();
+	
+	// member 테이블과 profilepic 테이블 내용을 1:1 관계로 외부 조인해서 가져오기
+	MemberVO getMemberAndProfilepic(String id);
+	
 }

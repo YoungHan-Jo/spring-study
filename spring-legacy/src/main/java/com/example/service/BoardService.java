@@ -37,41 +37,71 @@ public class BoardService {
 		// 3페이지 20행부터 시작
 		// 4페이지 30행부터 시작
 		int startRow = (cri.getPageNum() - 1) * cri.getAmount();
-		
+
 		cri.setStartRow(startRow);
-		
+
 		List<BoardVO> boardList = boardMapper.getBoardsWithPaging(cri);
 		return boardList;
-	} //getBoardsByCri
+	} // getBoardsByCri
 
 	// 페이징, 검색어 적용해여 글 개수 가져오기
 	public int getCountBySearch(Criteria cri) {
 		int count = boardMapper.getCountBySearch(cri);
 		return count;
-	} //getCountBySearch
-	
+	} // getCountBySearch
+
 	public // 조회수 1증가
 	void updateReadcount(int num) {
 		boardMapper.updateReadcount(num);
 	}
-	
-	public BoardVO getBoardByNum(int num) {	
+
+	public BoardVO getBoardByNum(int num) {
 		return boardMapper.getBoardByNum(num);
 	}
-	
+
 	public BoardVO getBoardAndAttaches(int num) {
 		// join없이 하는 방법
 //		BoardVO boardVO = boardMapper.getBoardByNum(num);
 //		List<AttachVO> attachList = attachMapper.getAttachesByBno(num);
 //		boardVO.setAttachList(attachList);
 //		return boardVO; 
-		
+
 		// join 쿼리로 데이터 가져오기
-		BoardVO boardVO = boardMapper.getBoardAndAttaches(num); 
-		
+		BoardVO boardVO = boardMapper.getBoardAndAttaches(num);
+
 		return boardVO;
 	}
 
+	public int getNextnum() {
+		return boardMapper.getNextnum();
+	}
 	
-
+	
+	// 주글 한개(boardVO)와 첨부파일 여러개(attachList) 트랜잭션으로 처리하기
+	@Transactional
+	public void addBoardAndAttaches(BoardVO boardVO) {
+		// attach 테이블의 bno컬럼이 외래키로서
+		// board 테이블의 num 컬럼을 참조하므로
+		// board 레코드가 먼저 insert된 이후에 attach 레코드가 insert 가능함.
+		
+		boardMapper.addBoard(boardVO);
+		
+		List<AttachVO> attachList = boardVO.getAttachList();
+		
+		if (attachList.size() > 0) {
+			attachMapper.addAttaches(attachList);
+			// addAttaches로 한번에 처리되도록 DAO를 만들었기때문에 for문 돌릴 필요 없음.
+			// 더 효율적인 방법
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 } // end of class

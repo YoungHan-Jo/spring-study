@@ -1,17 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
-
-<%
-String id = (String) session.getAttribute("id");
-%>
-
-<!-- pageNum 파라미터 가져오기 -->
-<%
-String pageNum = request.getParameter("pageNum");
-%>
-
-
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -45,16 +34,16 @@ String pageNum = request.getParameter("pageNum");
 							<h5>게시판 새글쓰기</h5>
 							<div class="divider" style="margin: 30px 0;"></div>
 
-							<form action="/board/boardWritePro.jsp" method="POST" enctype="multipart/form-data">
+							<form action="/board/write" method="POST" enctype="multipart/form-data">
 							
 								<!-- multipart/form-data 로 하면 뭉쳐져서 넘어가기 때문에
 									input:hidden 속성으로 name/ value 로 쿠키 넘기듯이 넘기기 -->
-								<input type="hidden" name="pageNum" value="<%=pageNum %>">
+								<input type="hidden" name="pageNum" value="${ pageNum }">
 								
 								<div class="row">
 									<div class="input-field col s12">
 										<i class="material-icons prefix">account_box</i> <input
-											id="id" type="text" name="id" value="<%=id%>" readonly>
+											id="id" type="text" name="mid" value="${ sessionScope.id }" readonly>
 										<label for="id">아이디</label>
 									</div>
 								</div>
@@ -86,7 +75,7 @@ String pageNum = request.getParameter("pageNum");
 
 								<div class="row" id="fileBox">
 									<div class="col s12">
-										<input type="file" name="file0">
+										<input type="file" name="files">
 										<button class="waves-effect waves-light btn-small file-delete">
 											<i class="material-icons">clear</i>
 										</button>
@@ -104,7 +93,7 @@ String pageNum = request.getParameter("pageNum");
 									</button>
 									&nbsp;&nbsp;
 									<button class="btn waves-effect waves-light" type="button"
-										onclick="location.href = '/board/boardList.jsp'">
+										onclick="location.href = '/board/list?pageNum=${ pageNum }'">
 										글목록 <i class="material-icons right">list</i>
 									</button>
 								</div>
@@ -129,7 +118,7 @@ String pageNum = request.getParameter("pageNum");
 	<jsp:include page="/WEB-INF/views/include/commonJs.jsp" />
 	<script>
 	
-	var fileIndex = 1;
+
 	var fileCount = 1;
 		
 	$('#btnAddFile').on('click',function(){
@@ -139,13 +128,12 @@ String pageNum = request.getParameter("pageNum");
 		}
 		
 		var str = `<div class="col s12">
-						<input type="file" name="file\${fileIndex}"> 
+						<input type="file" name="files">
 						<button class="waves-effect waves-light btn-small file-delete"><i class="material-icons">clear</i></button>
 					</div>`;
 					
 		$('#fileBox').append(str);
 		
-		fileIndex++;
 		fileCount++;
 	
 	})

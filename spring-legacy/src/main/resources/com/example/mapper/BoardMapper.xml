@@ -125,7 +125,7 @@
 	</select>
 
 	<!-- 새로운 컬럼이 추가되어도 에러가 나지 않도록 컬럼 하나하나 전부 명시해줌 -->
-	<!-- attachVO도 있기때문에 resultMap 사용 -->
+	<!-- outer join은 attachVO도 있기때문에 담는 방식 resultMap 사용 -->
 	<select id="getBoardAndAttaches" resultMap="boardAndAttaches">
 		<![CDATA[
 			SELECT b.num, b.mid, b.subject, b.content, b.readcount, b.reg_date, 
@@ -137,7 +137,13 @@
 			WHERE b.num = #{num}
 		]]>
 	</select>
-	<!-- property는 VO에 set 하는거처럼. -->
+	
+	<!-- 이 정보 기준으로 데이터를 담음 id로 구분 -->
+	<!-- property는 VO에 set 하는거처럼 낙타표기 -->
+	<!-- 기본키 컬럼은 id태그 -->
+	<!-- 1:1 association 태그 -->
+	<!-- 1:N collection 태그 -->
+	<!-- property의 타입: javaType/ 구성요소타입: ofType -->
 	<resultMap type="boardVO" id="boardAndAttaches">
 		<id column="num" property="num"/>
 		<result column="mid" property="mid"/>
@@ -145,6 +151,17 @@
 		<result column="content" property="content"/>
 		<result column="readcount" property="readcount"/>
 		<result column="reg_date" property="regDate"/>
+		<result column="ipaddr" property="ipaddr"/>
+		<result column="re_ref" property="reRef"/>
+		<result column="re_lev" property="reLev"/>
+		<result column="re_seq" property="reSeq"/>
+		<collection property="attachList" javaType="list" ofType="attachVO">
+			<id column="uuid" property="uuid"/>
+			<result column="uploadpath" property="uploadpath"/>
+			<result column="filename" property="filename"/>
+			<result column="filetype" property="filetype"/>
+			<result column="bno" property="bno"/>
+		</collection>
 	
 	
 	</resultMap>

@@ -36,5 +36,14 @@ public class MemberMapperTests {
 
 		memberMapper.insert(memberVO);
 	}
+	
+	@Test
+	public void testGetMemberAndProfilepic() {
+		MemberVO memberVO = memberMapper.getMemberAndProfilepic("ccc");
+		
+		assertNotNull(memberVO);
+		
+		System.out.println(memberVO);
+	}
 
 }

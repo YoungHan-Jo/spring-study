@@ -15,5 +15,8 @@ public class MemberVO {
 	private String email;
 	private String recvEmail;
 	private Date regDate;
+	
+	// 1:1 관계로 조인해서 저장
+	private ProfilepicVO profilepicVO;
 
 }
