@@ -39,5 +39,16 @@
 			ORDER BY filetype, filename
 		]]>	
 	</select>
+	
+	<delete id="deleteAttachesByUuids">
+		<![CDATA[
+			DELETE
+			FROM attach
+			WHERE uuid IN
+		]]>
+		<foreach collection="list" item="uuid" open="(" separator="," close=")">
+			#{uuid}
+		</foreach>
+	</delete>
 
 </mapper>

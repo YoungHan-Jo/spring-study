@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -70,7 +71,10 @@ public class BoardController {
 	} // list
 
 	@GetMapping("/content")
-	public String content(int num, @ModelAttribute("pageNum") String pageNum, Model model) {
+	public String content(int num, 
+			@RequestParam(required = false, defaultValue = "1") @ModelAttribute("pageNum") String pageNum, 
+			Model model) {
+		// 매개변수 하나에 애노테이션 여러개 가능
 
 		// 조회수 1 증가시키기
 		boardService.updateReadcount(num);
@@ -293,5 +297,64 @@ public class BoardController {
 		return "redirect:/board/list?pageNum=" + pageNum;
 
 	}// remove
+	
+	@GetMapping("/modify")
+	public String modifyForm(int num,@ModelAttribute("pageNum") String pageNum, Model model) {
+		
+		BoardVO boardVO = boardService.getBoardAndAttaches(num); // JOIN으로 모두 가져옴
+		
+		model.addAttribute("board", boardVO);
+		model.addAttribute("attachList",boardVO.getAttachList());
+		
+		return "board/boardModify";
+	} //modifyForm
+	
+	@PostMapping("/modify")
+	public String modify(List<MultipartFile> files, BoardVO boardVO, 
+			@RequestParam(required = false, defaultValue = "1") int pageNum,
+			@RequestParam(name = "delfile", required = false) List<String> delUuidList,
+			HttpServletRequest request, RedirectAttributes rttr) throws IllegalStateException, IOException {
+		// 애노테이션으로 name속성에 받을 name명, 매개변수명은 마음대로
+		// 요구하는 값이 null값일 수도 있을 때는 required속성을 false로
+		// 값을 찾을 수 없으면 기본값을 설정 defaultValue = "" String형태로 입력한 값을로 기본값 설정 
+		
+		// 1) 신규 첨부파일 업로드하기. 신규파일정보 리스트 가져오기.
+		List<AttachVO> newAttachList = uploadFilesAndGetAttachList(files, boardVO.getNum());
+		System.out.println("=============POST modify - 신규 첨부파일 업로드 완료 ==============");
+		
+		// 2) 삭제할 첨부파일 삭제하기(썸네일 이미지도 삭제)
+		List<AttachVO> delAttachList = null;
+		if(delUuidList != null && delUuidList.size() > 0) {
+			delAttachList = attachService.getAttachesByUuids(delUuidList);
+			
+			deleteAttachFiles(delAttachList); //첨부파일(썸네일포함) 삭제
+		}
+		System.out.println("=============POST modify - 기존 첨부파일 삭제 완료 ==============");
+		
+		// 3) 테이블 작업
+		//	boardVO 게시글 수정, 
+		//  attach 테이블에 신규파일정보(newAttachList)를 insert, 삭제파일정보(delUuidList)를 delete
+		
+		// update할 BoardVO 객체의 데이터 수정작업
+		// 사용자 IP주소 저장. 다른정보는 매개변수를통해 spring이 해줌
+		boardVO.setIpaddr(request.getRemoteAddr()); 
+		
+		// 글 번호에 해당하는 게시글 수정, 첨부파일정보 수정(insert,delete) - 한 개의 트랜잭션으로 처리
+		boardService.updateBoardAndInsertAttachesAndDeleteAttaches(boardVO, newAttachList, delUuidList);
+		
+		System.out.println("=============POST modify - 테이블 내용 수정 완료 ==============");
+		
+		// 리다이렉트 쿼리스트링 정보 설정
+		rttr.addAttribute("num", boardVO.getNum());
+		rttr.addAttribute("pageNum", pageNum);
+		
+		// 상세보기 화면으로 리다이렉트 이동
+		return "redirect:/board/content";
+		
+	} // modify
+	
+	
+	
+	
 
 }

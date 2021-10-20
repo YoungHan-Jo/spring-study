@@ -33,7 +33,8 @@ public interface AttachMapper {
 	void deleteAttachesByBno(int bno);
 	
 	@Delete("DELETE FROM attach WHERE uuid = #{uuid}")
-	void deleteAttachesByUuid(String uuid);
+	void deleteAttachByUuid(String uuid);
 	
+	int deleteAttachesByUuids(List<String> uuidList);
 	
 }

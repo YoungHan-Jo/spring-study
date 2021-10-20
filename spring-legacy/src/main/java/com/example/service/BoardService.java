@@ -103,6 +103,22 @@ public class BoardService {
 		boardMapper.deleteBoardByNum(bno);
 	}
 	
+	@Transactional
+	public void updateBoardAndInsertAttachesAndDeleteAttaches(BoardVO boardVO, 
+			List<AttachVO> newAttachList, List<String> delUuidList) {
+		if(newAttachList != null && newAttachList.size() > 0) {
+			attachMapper.addAttaches(newAttachList);			
+		}
+		
+		if(delUuidList != null && delUuidList.size() > 0) {
+			attachMapper.deleteAttachesByUuids(delUuidList);
+		}
+		
+		
+		
+		
+		boardMapper.updateBoard(boardVO);
+	}
 	
 	
 	
