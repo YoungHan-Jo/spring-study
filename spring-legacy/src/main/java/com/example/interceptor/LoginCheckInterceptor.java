@@ -6,7 +6,19 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.example.domain.MemberVO;
+import com.example.service.MemberService;
+
 public class LoginCheckInterceptor implements HandlerInterceptor{
+
+	
+	private MemberService memberService;
+	
+	public LoginCheckInterceptor(MemberService memberService) {
+		super();
+		this.memberService = memberService;
+	}
+
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -20,6 +32,11 @@ public class LoginCheckInterceptor implements HandlerInterceptor{
 			
 			return false; // 예정이었던 컨트롤러는 호출 하지 말아야함. false
 		}
+		
+		MemberVO memberVO = memberService.getMemberById(id);
+		System.out.println(memberVO.toString());
+		
+		
 		
 		return true;
 	}
