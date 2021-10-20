@@ -95,6 +95,13 @@ public class BoardService {
 		}
 	}
 	
+	@Transactional
+	public void deleteBoardAndAttaches(int bno) {
+		// 외래키 관계에 의해, 참조하는 테이블 부터 삭제
+		
+		attachMapper.deleteAttachesByBno(bno);
+		boardMapper.deleteBoardByNum(bno);
+	}
 	
 	
 	

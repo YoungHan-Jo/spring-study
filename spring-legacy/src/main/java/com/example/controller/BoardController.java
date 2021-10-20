@@ -235,13 +235,63 @@ public class BoardController {
 		// RedirectAttributes 타입의 객체에 저장하면,
 		// 스프링이 자동으로 쿼리스트링으로 변환해서 처리해줌
 		// 매개변수 받아서 입력
-		
+
 		rttr.addAttribute("num", boardVO.getNum());
 		rttr.addAttribute("pageNum", 1);
 
-		// 대부분 POST형식은 뒤로가기하면 사용자 입력값이 중복 입력 될 수도 있어서 
+		// 대부분 POST형식은 뒤로가기하면 사용자 입력값이 중복 입력 될 수도 있어서
 		// 리다이렉트로 주소를 갱신하기
 		return "redirect:/board/content";
 	} // write
+
+	// 첨부파일 삭제하는 메소드
+	private void deleteAttachFiles(List<AttachVO> attachList) {
+		// 삭제할 파일정보가 없으면 메소드 종료
+		if (attachList == null || attachList.size() == 0) {
+			System.out.println("삭제할 첨부파일 정보가 없습니다...");
+			return;
+		}
+
+		String basePath = "C:/jyh/upload";
+
+		for (AttachVO attachVO : attachList) {
+			String uploadpath = basePath + "/" + attachVO.getUploadpath();
+			String filename = attachVO.getUuid() + "_" + attachVO.getFilename();
+
+			File file = new File(uploadpath, filename);
+
+			if (file.exists()) { // 해당경로에 첨부파일이 존재하면
+				file.delete();
+			}
+
+			// 첨부파일이 이미지일 경우 썸네일 이미지도 삭제
+			if (attachVO.getFiletype().equals("I")) {
+				File thumbnailFile = new File(uploadpath, "s_" + filename);
+				if(thumbnailFile.exists()) {
+					thumbnailFile.delete();
+				}
+			}
+
+		} // for
+
+	} // deleteAttachFiles
+
+	@GetMapping("/remove")
+	public String remove(int num, String pageNum) {
+
+		// ========= 첨부파일 삭제 ==========
+		List<AttachVO> attachList = attachService.getAttachesByBno(num);
+
+		deleteAttachFiles(attachList);// 첨부파일(썸네일 포함) 삭제하기
+
+		System.out.println("========= 첨부파일 삭제 완료 ========");
+
+		// attach, board 테이블 내용 삭제하기- 트랜잭션 단위로 처리
+		boardService.deleteBoardAndAttaches(num);
+
+		// 글 목록으로 리다이렉트로 이동
+		return "redirect:/board/list?pageNum=" + pageNum;
+
+	}// remove
 
 }

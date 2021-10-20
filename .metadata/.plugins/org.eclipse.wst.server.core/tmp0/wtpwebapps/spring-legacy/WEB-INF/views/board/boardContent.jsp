@@ -72,9 +72,9 @@ time.comment-date {
 								</tr>
 								<tr>
 									<th class="center-align">첨부파일</th>
-											<!-- test="${ attachCount gt 0 }" -->
+									<!-- test="${ attachCount gt 0 }" -->
 									<td colspan="5"><c:choose>
-											
+
 											<c:when test="${ fn:length(attachList) gt 0 }">
 												<c:forEach var="attach" items="${ attachList }">
 
@@ -82,7 +82,7 @@ time.comment-date {
 														<!-- 일반파일 -->
 														<!-- 다운로드할 일반파일 경로 변수 만들기 pageScope로 저장 -->
 														<c:set var="fileCallPath"
-															value="${ attach.uploadpath }/${ attach.filename }" />
+															value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }" />
 														<li><a href="/download?fileName=${ fileCallPath }">
 																<i class="material-icons">file_present</i> ${ attach.filename }
 														</a></li>
@@ -90,9 +90,9 @@ time.comment-date {
 													<c:if test="${ attach.filetype eq 'I' }">
 														<!-- 이미지파일 -->
 														<c:set var="fileCallPath"
-															value="${ attach.uploadpath }/s_${ attach.filename }" />
+															value="${ attach.uploadpath }/s_${ attach.uuid }_${ attach.filename }" />
 														<c:set var="fileCallPathOrigin"
-															value="${ attach.uploadpath }/${ attach.filename }" />
+															value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }" />
 														<li><a
 															href="/download?fileName=${ fileCallPathOrigin }"> <img
 																src="/display?fileName=${ fileCallPath }">
