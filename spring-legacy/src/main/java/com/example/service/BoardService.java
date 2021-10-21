@@ -75,56 +75,60 @@ public class BoardService {
 	public int getNextnum() {
 		return boardMapper.getNextnum();
 	}
-	
-	
-	// 주글 한개(boardVO)와 첨부파일 여러개(attachList) 트랜잭션으로 처리하기
+
+	// 주글 한개(boardVO)와 첨부파일 여러개(attachList) 트랜잭션으로 한번에 처리하기
 	@Transactional
 	public void addBoardAndAttaches(BoardVO boardVO) {
 		// attach 테이블의 bno컬럼이 외래키로서
 		// board 테이블의 num 컬럼을 참조하므로
 		// board 레코드가 먼저 insert된 이후에 attach 레코드가 insert 가능함.
-		
+
 		boardMapper.addBoard(boardVO);
-		
+
 		List<AttachVO> attachList = boardVO.getAttachList();
-		
+
 		if (attachList.size() > 0) {
 			attachMapper.addAttaches(attachList);
 			// addAttaches로 한번에 처리되도록 DAO를 만들었기때문에 for문 돌릴 필요 없음.
 			// 더 효율적인 방법
 		}
 	}
-	
+
+	// 답글 쓰기 메소드(게시글 정보와 첨부파일 정보를 한개의 트랜잭션으로 처리)
+	@Transactional
+	public void addReplyAndAttachese(BoardVO boardVO) {
+		// 답글이 달릴 글과 같은 글 그룹(reRef) 안에서
+		// 답글이 달릴 글의 순번보다 큰 글들의 순번(reSeq)을 1씩 증가
+		boardMapper.updateReSeqPlusOne(boardVO.getReRef(), boardVO.getReSeq());
+		
+		// insert할 답글의 re값들 수정
+		boardVO.setReLev(boardVO.getReLev() + 1);
+		boardVO.setReSeq(boardVO.getReSeq() + 1);
+		
+		addBoardAndAttaches(boardVO);
+		
+	}
+
 	@Transactional
 	public void deleteBoardAndAttaches(int bno) {
 		// 외래키 관계에 의해, 참조하는 테이블 부터 삭제
-		
+
 		attachMapper.deleteAttachesByBno(bno);
 		boardMapper.deleteBoardByNum(bno);
-	}
-	
+	} //deleteBoardAndAttaches
+
 	@Transactional
-	public void updateBoardAndInsertAttachesAndDeleteAttaches(BoardVO boardVO, 
-			List<AttachVO> newAttachList, List<String> delUuidList) {
-		if(newAttachList != null && newAttachList.size() > 0) {
-			attachMapper.addAttaches(newAttachList);			
+	public void updateBoardAndInsertAttachesAndDeleteAttaches(BoardVO boardVO, List<AttachVO> newAttachList,
+			List<String> delUuidList) {
+		if (newAttachList != null && newAttachList.size() > 0) {
+			attachMapper.addAttaches(newAttachList);
 		}
-		
-		if(delUuidList != null && delUuidList.size() > 0) {
+
+		if (delUuidList != null && delUuidList.size() > 0) {
 			attachMapper.deleteAttachesByUuids(delUuidList);
 		}
-		
-		
-		
-		
+
 		boardMapper.updateBoard(boardVO);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
+	} //updateBoardAndInsertAttachesAndDeleteAttaches
+
 } // end of class

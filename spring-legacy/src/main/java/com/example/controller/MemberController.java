@@ -50,6 +50,7 @@ public class MemberController {
 		// URL 요청 경로명과 JSP 경로명이 같을 경우 사용할 수 있다.
 		// 단순한 구조일 때 혹은 회사에 따라 사용할 경우도 있음.
 	}
+	
 
 	@PostMapping("/join") // POST 요청
 	public ResponseEntity<String> join(MemberVO memberVO) { // 요청받은 값을 전부 setter로 입력한 채로 memberVO객체가 생성됨

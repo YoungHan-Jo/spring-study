@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<h1>회원정보 수정하기</h1>
+<h1>회원정보 추가하기</h1>
 <hr>
 
 <form id="frm">
@@ -29,7 +29,7 @@
 	<label><input name="recvEmail" value="Y" type="radio" checked /> 예</label>
 	<label><input name="recvEmail" value="N" type="radio" /> 아니오</label>
 	<br>
-	<button type="button" id="btn">회원수정</button>
+	<button type="button" id="btn">회원가입</button>
 </form>
 
 <script src="/resources/js/jquery-3.6.0.js"></script>
@@ -46,8 +46,6 @@
 // 				name: $('input[name="name"]').val()
 // 		};
 
-		var id = $('input[name="id"]').val();
-
 		var obj = $('form#frm').serializeObject();
 		console.log(obj);
 		console.log(typeof obj);
@@ -56,11 +54,10 @@
 		console.log(strJson);
 		console.log(typeof strJson);
 		
-		
 		// ajax 함수 호출
 		$.ajax({
-			url: '/api/members/' + id,
-			method: 'PUT',
+			url: '/api/members',
+			method: 'POST',
 			data: strJson,
 			contentType: 'application/json; charset=UTF-8',
 			success: function (data) {

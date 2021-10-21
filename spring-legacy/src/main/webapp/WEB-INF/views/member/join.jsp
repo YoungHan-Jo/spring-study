@@ -38,9 +38,10 @@
 								name="frm">
 								<div class="row">
 									<div class="input-field col s12 m9">
-										<i class="material-icons prefix">account_box</i> <input
-											id="id" type="text" name='id' data-length="20"> <label
-											for="id">아이디</label> <span class="helper-text"></span>
+										<i class="material-icons prefix">account_box</i> 
+										<input id="id" type="text" name='id' data-length="20"> 
+										<label for="id">아이디</label>
+										<span class="helper-text"></span>
 									</div>
 
 									<div class="col s12 m3">
@@ -159,7 +160,7 @@
 			//open(주소, 창 이름, 부가설정)
 		})
 		
-		$('input#id').on('keyup',function(){
+		$('input#id').on('focusout',function(){
 			var id = $(this).val();
 			if (id.length == 0){
 				return;

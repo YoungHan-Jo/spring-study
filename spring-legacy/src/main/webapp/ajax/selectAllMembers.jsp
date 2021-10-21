@@ -27,8 +27,7 @@
 						<th>아이디</th><th>이름</th><th>성별</th><th>생년월일</th>
 					<tr>
 					`;
-			
-			
+					
 			if(array != null && array.length > 0) {
 				
 				for(var member of array) {
@@ -52,10 +51,7 @@
 			
 		}// showData
 	
-	
 		$('button#btn').on('click', function() {
-
-			
 
 			//ajax 함수 호출 - 비동기(쓰레드랑 비슷) 자바스크립트
 			$.ajax({
@@ -67,9 +63,7 @@
 					
 					showData(data);
 				}
-				
 			});
-
 		})
 	</script>
 </body>

@@ -71,10 +71,10 @@ public class BoardController {
 	} // list
 
 	@GetMapping("/content")
-	public String content(int num, 
-			@RequestParam(required = false, defaultValue = "1") @ModelAttribute("pageNum") String pageNum, 
-			Model model) {
+	public String content(int num, @ModelAttribute("pageNum") String pageNum, Model model) {
 		// 매개변수 하나에 애노테이션 여러개 가능
+
+		System.out.println("pageNum : " + pageNum);
 
 		// 조회수 1 증가시키기
 		boardService.updateReadcount(num);
@@ -271,7 +271,7 @@ public class BoardController {
 			// 첨부파일이 이미지일 경우 썸네일 이미지도 삭제
 			if (attachVO.getFiletype().equals("I")) {
 				File thumbnailFile = new File(uploadpath, "s_" + filename);
-				if(thumbnailFile.exists()) {
+				if (thumbnailFile.exists()) {
 					thumbnailFile.delete();
 				}
 			}
@@ -297,64 +297,100 @@ public class BoardController {
 		return "redirect:/board/list?pageNum=" + pageNum;
 
 	}// remove
-	
+
 	@GetMapping("/modify")
-	public String modifyForm(int num,@ModelAttribute("pageNum") String pageNum, Model model) {
-		
+	public String modifyForm(int num, @ModelAttribute("pageNum") String pageNum, Model model) {
+
 		BoardVO boardVO = boardService.getBoardAndAttaches(num); // JOIN으로 모두 가져옴
-		
+
 		model.addAttribute("board", boardVO);
-		model.addAttribute("attachList",boardVO.getAttachList());
-		
+		model.addAttribute("attachList", boardVO.getAttachList());
+
 		return "board/boardModify";
-	} //modifyForm
-	
+	} // modifyForm
+
 	@PostMapping("/modify")
-	public String modify(List<MultipartFile> files, BoardVO boardVO, 
+	public String modify(List<MultipartFile> files, BoardVO boardVO,
 			@RequestParam(required = false, defaultValue = "1") int pageNum,
-			@RequestParam(name = "delfile", required = false) List<String> delUuidList,
-			HttpServletRequest request, RedirectAttributes rttr) throws IllegalStateException, IOException {
+			@RequestParam(name = "delfile", required = false) List<String> delUuidList, HttpServletRequest request,
+			RedirectAttributes rttr) throws IllegalStateException, IOException {
 		// 애노테이션으로 name속성에 받을 name명, 매개변수명은 마음대로
 		// 요구하는 값이 null값일 수도 있을 때는 required속성을 false로
-		// 값을 찾을 수 없으면 기본값을 설정 defaultValue = "" String형태로 입력한 값을로 기본값 설정 
-		
+		// 값을 찾을 수 없으면 기본값을 설정 defaultValue = "" String형태로 입력한 값을로 기본값 설정
+
 		// 1) 신규 첨부파일 업로드하기. 신규파일정보 리스트 가져오기.
 		List<AttachVO> newAttachList = uploadFilesAndGetAttachList(files, boardVO.getNum());
 		System.out.println("=============POST modify - 신규 첨부파일 업로드 완료 ==============");
-		
+
 		// 2) 삭제할 첨부파일 삭제하기(썸네일 이미지도 삭제)
 		List<AttachVO> delAttachList = null;
-		if(delUuidList != null && delUuidList.size() > 0) {
+		if (delUuidList != null && delUuidList.size() > 0) {
 			delAttachList = attachService.getAttachesByUuids(delUuidList);
-			
-			deleteAttachFiles(delAttachList); //첨부파일(썸네일포함) 삭제
+
+			deleteAttachFiles(delAttachList); // 첨부파일(썸네일포함) 삭제
 		}
 		System.out.println("=============POST modify - 기존 첨부파일 삭제 완료 ==============");
-		
+
 		// 3) 테이블 작업
-		//	boardVO 게시글 수정, 
-		//  attach 테이블에 신규파일정보(newAttachList)를 insert, 삭제파일정보(delUuidList)를 delete
-		
+		// boardVO 게시글 수정,
+		// attach 테이블에 신규파일정보(newAttachList)를 insert, 삭제파일정보(delUuidList)를 delete
+
 		// update할 BoardVO 객체의 데이터 수정작업
 		// 사용자 IP주소 저장. 다른정보는 매개변수를통해 spring이 해줌
-		boardVO.setIpaddr(request.getRemoteAddr()); 
-		
+		boardVO.setIpaddr(request.getRemoteAddr());
+
 		// 글 번호에 해당하는 게시글 수정, 첨부파일정보 수정(insert,delete) - 한 개의 트랜잭션으로 처리
 		boardService.updateBoardAndInsertAttachesAndDeleteAttaches(boardVO, newAttachList, delUuidList);
-		
+
 		System.out.println("=============POST modify - 테이블 내용 수정 완료 ==============");
-		
+
 		// 리다이렉트 쿼리스트링 정보 설정
 		rttr.addAttribute("num", boardVO.getNum());
 		rttr.addAttribute("pageNum", pageNum);
-		
+
 		// 상세보기 화면으로 리다이렉트 이동
 		return "redirect:/board/content";
-		
+
 	} // modify
-	
-	
-	
-	
+
+	@GetMapping("/reply")
+	public String replyForm(@ModelAttribute("reRef") String reRef, @ModelAttribute("reLev") String reLev,
+			@ModelAttribute("reSeq") String reSeq, @ModelAttribute("pageNum") String pageNum, Model model) {
+
+		return "board/replyWrite";
+	} // replyForm
+
+	@PostMapping("/reply")
+	public String reply(List<MultipartFile> files, BoardVO boardVO, @ModelAttribute("pageNum") String pageNum,
+			HttpServletRequest request, RedirectAttributes rttr)
+			throws IllegalStateException, IOException {
+		// MultipartFile을 List로해도되고 []로 해도됨, name속성이 files라서
+		// 매개변수명도 똑같이 하면 spring이 알아서 배열(리스트로)로 찾아옴
+		
+		// insert할 새 글 번호
+		int num = boardService.getNextnum();
+		
+		// 첨부파일 업로드(썸네일생성) 후 attachList 리턴
+		List<AttachVO> attachList = uploadFilesAndGetAttachList(files, num);
+		
+		// ====== insert 할 답글 BoardVO 객체 데이터 설정 ======
+		boardVO.setNum(num);
+		boardVO.setReadcount(0);
+		boardVO.setRegDate(new Date());
+		boardVO.setIpaddr(request.getRemoteAddr());
+		
+		boardVO.setAttachList(attachList);
+		
+		// ㅁ 현재 boardVO에 들어있는 reRef, reLev, reSeq는 현제 insert할 답글의 정보가 아님.
+		// 답글을 남길 대상글에 대한 reRef, reLev, reSeq 정보임에 주의.
+		// 같은 ref인 기존에 있던 답글들의 seq를 +1 씩 update
+		
+		boardService.addReplyAndAttachese(boardVO);
+		
+		rttr.addAttribute("num", boardVO.getNum());
+		rttr.addAttribute("pageNum", pageNum);
+		
+		return "redirect:/board/content";
+	} // reply
 
 }
