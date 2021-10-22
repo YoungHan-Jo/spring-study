@@ -3,7 +3,7 @@ package com.example.domain;
 import lombok.Data;
 
 @Data
-public class ProfilepicVO {
+public class ProfilePicVO {
 	
 	private String uuid;
 	private String uploadpath;

@@ -1,6 +1,11 @@
 package com.example.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +23,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.domain.MemberVO;
+import com.example.domain.ProfilePicVO;
 import com.example.service.MemberService;
 import com.example.util.JScript;
+
+import net.coobird.thumbnailator.Thumbnailator;
 
 //예전에는 implements Controller 로 한 클래스당 1개의 기능만 했기때문에 이제는 사용하지 않음.
 // @Controller 애노테이션을 사용함.
@@ -50,7 +59,6 @@ public class MemberController {
 		// URL 요청 경로명과 JSP 경로명이 같을 경우 사용할 수 있다.
 		// 단순한 구조일 때 혹은 회사에 따라 사용할 경우도 있음.
 	}
-	
 
 	@PostMapping("/join") // POST 요청
 	public ResponseEntity<String> join(MemberVO memberVO) { // 요청받은 값을 전부 setter로 입력한 채로 memberVO객체가 생성됨
@@ -231,6 +239,11 @@ public class MemberController {
 
 		String id = (String) session.getAttribute("id");
 		MemberVO memberVO = memberService.getMemberById(id);
+		ProfilePicVO profilePicVO = memberService.getProfilePic(id);
+		
+		memberVO.setProfilePicVO(profilePicVO);
+
+		System.out.println(memberVO);
 
 //		String birthday = memberVO.getBirthday(); // '20020101' -> '2002-01-01'
 //
@@ -248,8 +261,89 @@ public class MemberController {
 		return "/member/modifyMember";
 	} // modifyMemberForm
 
+	// "년/월/일' 형식의 폴더명을 리턴하는 메소드
+	private String getFolder() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+
+		String str = sdf.format(new Date());
+
+		return str;
+	}// getFolder
+
+	private boolean checkImageType(File file) throws IOException {
+		boolean isImage = false;
+
+		String contentType = Files.probeContentType(file.toPath()); // "image/jpg" "image/png" 등으로 리턴함.
+		System.out.println("contentType : " + contentType);
+
+		isImage = contentType.startsWith("image"); // image로 시작할 때 true로 리턴
+
+		return isImage;
+	} // checkImageType
+
+	// 프로필 사진 업로드와 profilePicVO리턴
+	private ProfilePicVO uploadPicAndGetProfilePicVO(MultipartFile multipartFile, String id)
+			throws IllegalStateException, IOException {
+
+		System.out.println("file : " + multipartFile);
+
+		ProfilePicVO profilePicVO = new ProfilePicVO();
+
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			System.out.println("첨부파일 없음...");
+
+			return profilePicVO;
+		}
+
+		// 업로드 기준경로
+		String uploadFolder = "C:/jyh/upload/profilePic";
+
+		File uploadPath = new File(uploadFolder, getFolder()); // "C:/jyh/upload/2021/10/19"
+		System.out.println("uploadPath : " + uploadPath.getPath());
+
+		if (uploadPath.exists() == false) { // 파일경로가 존재하지 않으면
+			uploadPath.mkdirs(); // s붙여야 하위폴더까지 전부 만듦
+		}
+
+		String originalFilename = multipartFile.getOriginalFilename();
+
+		System.out.println("originalFilename : " + originalFilename);
+
+		// 파일명 중복을 피하기 위해
+		// uuid를 앞에 붙인 파일명을 사용함.
+		UUID uuid = UUID.randomUUID();
+		String uploadFilename = uuid.toString() + "_" + originalFilename;
+
+		File file = new File(uploadPath, uploadFilename); // 생성할 파일경로 파일명 정보
+
+		// 파일1개 업로드(파일 생성) 완료
+		multipartFile.transferTo(file); // 파일 생성하기
+		// =======================================================================
+
+		// 현재 업로드한 파일이 이미지 파일이면 썸네일 이미지를 추가로 생성하기
+		boolean isImage = checkImageType(file); // 이미지 파일여부 boolean으로 확인
+
+		if (isImage == true) {
+			File outFile = new File(uploadPath, "s_" + uploadFilename);
+
+			// createThumbnail(원본이미지, 썸네일 이미지, 가로, 세로)
+			Thumbnailator.createThumbnail(file, outFile, 100, 100); // 썸네일 이미지 파일 생성
+		}
+
+		profilePicVO.setUuid(uuid.toString());
+		profilePicVO.setUploadpath(getFolder());
+		profilePicVO.setFilename(originalFilename);
+		profilePicVO.setMid(id);
+
+		return profilePicVO;
+	}
+
 	@PostMapping("/modify")
-	public ResponseEntity<String> modifyMember(MemberVO memberVO, HttpSession session) {
+	public ResponseEntity<String> modifyMember(MultipartFile multipartFile, MemberVO memberVO, HttpSession session)
+			throws IllegalStateException, IOException {
+
+		// 비밀번호 체크
+
 		String id = (String) session.getAttribute("id");
 
 		MemberVO dbMemberVO = memberService.getMemberById(id);
@@ -272,6 +366,13 @@ public class MemberController {
 
 		System.out.println(memberVO.toString());
 
+		// 프로필 사진 업로드와 profilePicVO리턴
+		ProfilePicVO profilePicVO = uploadPicAndGetProfilePicVO(multipartFile, id);
+
+		System.out.println("profilePicVO : " + profilePicVO);
+		
+		memberVO.setProfilePicVO(profilePicVO);
+		
 		memberService.updateById(memberVO);
 
 		System.out.println(dbMemberVO.toString());

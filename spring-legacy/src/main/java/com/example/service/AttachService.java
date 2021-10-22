@@ -27,4 +27,8 @@ public class AttachService {
 	public int deleteAttachesByUuids(List<String> uuidList) {
 		return attachMapper.deleteAttachesByUuids(uuidList);
 	}
+	
+	public List<AttachVO> getAttachesByUploadpath(String uploadpath){
+		return attachMapper.getAttachesByUploadpath(uploadpath);
+	}
 }

@@ -14,7 +14,6 @@
 	<jsp:include page="/WEB-INF/views/include/top.jsp" />
 	<!-- end of Navbar area -->
 
-
 	<!-- Page Layout here -->
 	<div class="row container">
 

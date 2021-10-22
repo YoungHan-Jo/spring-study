@@ -95,7 +95,7 @@ time.comment-date {
 															value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }" />
 														<li><a
 															href="/download?fileName=${ fileCallPathOrigin }"> <img
-																src="/display?fileName=${ fileCallPath }">
+																src="/display?fileName=${ fileCallPath }" style="width: 50px">
 														</a></li>
 													</c:if>
 												</c:forEach>

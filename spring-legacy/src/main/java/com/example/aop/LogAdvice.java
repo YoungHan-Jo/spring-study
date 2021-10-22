@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
  ㅁ Point Cut : 조인포인트(후보)들 중에 실제 결합시킬 메소드를 의미함.
  */
 
-
 // Aspect는 별도의 모듈이라서 빈을 만들어주지는 않아 따로 애노테이션 해야함
 // Root context에 컴포넌트 스캔 등록, 활성화 시켜야함
 @Aspect // 주변부 로직을 가진 어드바이스 클래스

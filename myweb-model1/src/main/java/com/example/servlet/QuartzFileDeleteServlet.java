@@ -33,13 +33,13 @@ public class QuartzFileDeleteServlet extends HttpServlet{
 			Scheduler scheduler = schedulerFactory.getScheduler();
 			scheduler.start();
 
-			// jobDetail 타입 객체 준비
+			// jobDetail 타입 객체 준비( 실제 해야할 일)
 			JobDetail jobDetail = newJob(RemoveUploadedFilesJob.class)
 					.withIdentity("jobName", Scheduler.DEFAULT_GROUP)
 					.build();
 
 			// Trigger 객체 준비
-			Trigger trigger = newTrigger()
+			Trigger trigger = newTrigger() 
 					.withIdentity("triggerName", Scheduler.DEFAULT_GROUP)
 					.withSchedule(cronSchedule("0 0 2 * * ?")) // 초 분 시 일 월 요일 (년)
 					.build();

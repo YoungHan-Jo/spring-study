@@ -17,6 +17,6 @@ public class MemberVO {
 	private Date regDate;
 	
 	// 1:1 관계로 조인해서 저장
-	private ProfilepicVO profilepicVO;
+	private ProfilePicVO profilePicVO;
 
 }
