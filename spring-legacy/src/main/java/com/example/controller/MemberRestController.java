@@ -36,7 +36,7 @@ import com.example.service.MemberService;
 
 // 일반 Controller 애노테이션 클래스에서 사용한다면
 // 특정 Rest방식 메소드에 ResponseBody 애노테이션을 붇이면 됨.
-@RestController // 클래스의 모든 메소드의 리턴값이 JSON 또는 XML를 바로 응답으로 보내도록 동작함
+@RestController // 클래스의 모든 메소드의 리턴값이 JSON 또는 XML를 바로 응답으로 보내도록 동작함, 경로가 아닌 데이터만 보냄.
 @RequestMapping("/api/*")
 public class MemberRestController {
 

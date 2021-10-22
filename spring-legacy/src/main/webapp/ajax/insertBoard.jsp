@@ -27,7 +27,7 @@ span.file-delete {
 		<table border=1>
 			<tr>
 				<th>작성자 아이디</th>
-				<td><input type="text" name="id" id="id"></td>
+				<td><input type="text" name="mid" id="id"></td>
 			</tr>
 			<tr>
 				<th>글제목</th>
@@ -44,7 +44,7 @@ span.file-delete {
 					<button type="button" id="btnAddFile">첨부파일 추가</button>
 					<div id="fileBox">
 						<div>
-							<input type="file" name="file0"><span class="file-delete">❌</span>
+							<input type="file" name="files"><span class="file-delete">❌</span>
 						</div>
 					</div>
 					<div id="uploadResult">
@@ -68,7 +68,7 @@ span.file-delete {
 	<script>
 
 	
-	var fileIndex = 1;
+	
 	var fileCount = 1;
 	
 	$('#btnAddFile').on('click',function(){
@@ -80,14 +80,14 @@ span.file-delete {
 		
 		var str = `
 			<div>
-			<input type="file" name="file\${fileIndex}"><span
+			<input type="file" name="files"><span
 				class="file-delete">❌</span>
 			</div>
 			`;
 			
 		$('div#fileBox').append(str)
 		
-		fileIndex++;
+		
 		fileCount++;
 	});
 	
@@ -105,7 +105,7 @@ span.file-delete {
 	// 글쓰기 버튼 클릭했을 때
 	$('#btnWrite').on('click',function(){
 		
-		var form = $('form#frm')[0];
+		var form = $('form#frm')[0]; // jQuery 객체에서 순수form 객체의 참조를 [0] 인덱스로 꺼냄
 		console.log(form);
 		console.log(typeof form);
 		
@@ -130,7 +130,7 @@ span.file-delete {
 				$('form#frm')[0].reset();
 				$('div#fileBox').html(cloneObj.html()); // 파일첨부 부분 초기화 시키기
 				
-				showUploadedFile(data.attachList);
+				showUploadedFile(data.board.attachList);
 			} // success
 			
 		});

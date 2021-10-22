@@ -23,7 +23,15 @@ public class MemberService {
 	// 클래스 안(여러개의 DB를 묶음으로 처리해야할 때)에서 예외가 발생하면 rollback
 	// 완료가 되어야 commit 됨
 	public void register(MemberVO memberVO) {
+		
+		long beginTime = System.currentTimeMillis();
+		
 		memberMapper.insert(memberVO);
+		
+		long endTime = System.currentTimeMillis();
+		
+		long diffTime = endTime - beginTime;
+		System.out.println("메소드 실행시간 : " + diffTime + "ms");
 	}
 	
 	public int deleteById(String id) {
