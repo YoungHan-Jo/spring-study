@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.domain.AttachVO;
+import com.example.domain.Criteria;
 import com.example.mapper.AttachMapper;
 
 @Service
@@ -31,4 +32,19 @@ public class AttachService {
 	public List<AttachVO> getAttachesByUploadpath(String uploadpath){
 		return attachMapper.getAttachesByUploadpath(uploadpath);
 	}
+	
+	public List<AttachVO> getImgAttachesByCri(Criteria cri){
+		
+		int startRow = (cri.getPageNum() - 1) * cri.getAmount();
+
+		cri.setStartRow(startRow);
+		
+		return attachMapper.getImgAttachesByCri(cri);
+	}
+	
+	public int getCountImgAttaches() {
+		return attachMapper.getCountImgAttaches();
+	}
+	
+	
 }

@@ -12,4 +12,6 @@ public interface ProfilePicMapper {
 	
 	ProfilePicVO getProfilePic(String mid);
 	
+	void deleteByMid(String mid);
+	
 }

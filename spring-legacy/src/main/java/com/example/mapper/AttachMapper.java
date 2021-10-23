@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
 import com.example.domain.AttachVO;
+import com.example.domain.Criteria;
 
 public interface AttachMapper {
 
@@ -36,5 +37,9 @@ public interface AttachMapper {
 	void deleteAttachByUuid(String uuid);
 	
 	int deleteAttachesByUuids(List<String> uuidList);
+	
+	List<AttachVO> getImgAttachesByCri(Criteria cri);
+	
+	int getCountImgAttaches();
 	
 }

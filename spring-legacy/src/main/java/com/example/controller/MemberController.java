@@ -27,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.domain.MemberVO;
 import com.example.domain.ProfilePicVO;
+import com.example.mapper.ProfilePicMapper;
 import com.example.service.MemberService;
+import com.example.service.ProfilePicService;
 import com.example.util.JScript;
 
 import net.coobird.thumbnailator.Thumbnailator;
@@ -43,9 +45,14 @@ public class MemberController {
 
 	// @Autowired
 	private MemberService memberService;
+	private ProfilePicService profilePicService;
 
-	public MemberController(MemberService memberService) {
+	
+
+	public MemberController(MemberService memberService, ProfilePicService profilePicService) {
+		super();
 		this.memberService = memberService;
+		this.profilePicService = profilePicService;
 	}
 
 	@GetMapping("/join") // GET 요청 @RequestMapping "/member/"에 + "join"이 됨 // / 있어도 알아서 없애줌
@@ -389,6 +396,32 @@ public class MemberController {
 	public String removeMemberForm() {
 		return "/member/removeMember";
 	}
+	
+	// 첨부파일 삭제하는 메소드
+	private void deleteProfilePic(ProfilePicVO profilePicVO) {
+		if (profilePicVO == null) {
+			System.out.println("삭제할 첨부파일 정보가 없습니다...");
+			return;
+		}
+		
+		String basePath = "C:/jyh/upload/profilePic";
+		
+		String uploadpath = basePath + "/" + profilePicVO.getUploadpath();
+		String filename = profilePicVO.getUuid() + "_" + profilePicVO.getFilename();
+		
+		File file = new File(uploadpath,filename);
+		
+		if (file.exists()) {
+			file.delete();
+		}
+		
+		File thumbnailPic = new File(uploadpath,"s_"+ filename);
+		if(thumbnailPic.exists()) {
+			thumbnailPic.delete();
+		}
+		
+	}
+	
 
 	@PostMapping("/remove")
 	public ResponseEntity<String> removeMember(HttpSession session, String passwd, HttpServletRequest request,
@@ -409,8 +442,16 @@ public class MemberController {
 
 			return new ResponseEntity<String>(str, headers, HttpStatus.OK);
 		}
-
-		memberService.deleteById(id);
+		
+		//========= 아이디에 해당하는 프로필 사진 삭제============
+		
+		ProfilePicVO profilePicVO = profilePicService.getProfilePic(id); 
+		
+		// 프로필 사진 파일(썸네일 포함) 삭제
+		deleteProfilePic(profilePicVO);
+		
+		// 프로필 사진 삭제와 멤버 아이디삭제를 한 개의 트랜잭션으로 처리
+		memberService.deleteMemberAndProfilePic(id);
 
 		// 세션 비우기
 		session.invalidate();

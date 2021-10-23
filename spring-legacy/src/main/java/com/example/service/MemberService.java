@@ -84,5 +84,13 @@ public class MemberService {
 	public ProfilePicVO getProfilePic(String mid) {
 		return profilePicMapper.getProfilePic(mid);
 	}
+	
+	@Transactional
+	public void deleteMemberAndProfilePic(String id) {
+		
+		profilePicMapper.deleteByMid(id);
+		memberMapper.deleteById(id);
+		
+	}
 
 }

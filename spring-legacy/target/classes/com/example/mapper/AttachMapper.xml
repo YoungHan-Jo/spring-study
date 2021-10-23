@@ -50,5 +50,23 @@
 			#{uuid}
 		</foreach>
 	</delete>
+	
+	<select id="getImgAttachesByCri" resultType="AttachVO">
+		<![CDATA[
+			SELECT *
+			FROM attach
+			WHERE filetype = 'I'
+			ORDER BY bno DESC, filename ASC
+			LIMIT #{startRow}, #{amount}
+		]]>
+	</select>
+	
+	<select id="getCountImgAttaches" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM attach
+			WHERE filetype = 'I'
+		]]>
+	</select>
 
 </mapper>

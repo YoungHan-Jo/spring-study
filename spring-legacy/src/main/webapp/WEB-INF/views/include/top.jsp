@@ -86,6 +86,7 @@ ex) 세션값을 꺼내서 입력해야할 부분에 ${ sessionScope.id } 로 �
 <ul id="dropdownBoard" class="dropdown-content">
 	<!-- 게시판 서브메뉴 -->
 	<li><a href="/board/list">게시판</a></li>
+	<li><a href="/gallery/list">갤러리</a></li>
 	<li><a href="">자료실</a></li>
 </ul>
 <ul id="dropdownChat" class="dropdown-content">

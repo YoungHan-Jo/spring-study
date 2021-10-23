@@ -35,6 +35,13 @@
 			WHERE mid = #{mid}
 		]]>
 	</select>
+	
+	<delete id="deleteByMid">
+		<![CDATA[
+			DELETE FROM profilepic
+			WHERE mid = #{mid}
+		]]>
+	</delete>
 
 
 
