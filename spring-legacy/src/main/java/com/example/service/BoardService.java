@@ -130,5 +130,9 @@ public class BoardService {
 
 		boardMapper.updateBoard(boardVO);
 	} //updateBoardAndInsertAttachesAndDeleteAttaches
+	
+	public List<BoardVO> getBoardList(){
+		return boardMapper.getBoardsAll();
+	}
 
 } // end of class

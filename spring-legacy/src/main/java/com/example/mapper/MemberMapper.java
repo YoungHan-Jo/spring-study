@@ -29,7 +29,7 @@ public interface MemberMapper {
 	void modifyPasswd(MemberVO memberVO);
 
 	@Update("UPDATE member "
-			+ "SET name = #{name}, birthday = #{birthday}, gender = #{gender}, email = #{email}, recv_email = #{recvEmail}, reg_date = #{regDate} "
+			+ "SET name = #{name}, birthday = #{birthday}, gender = #{gender}, email = #{email}, recv_email = #{recvEmail}"
 			+ "WHERE id = #{id} ")
 	void updateById(MemberVO memberVO);
 	

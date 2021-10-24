@@ -362,6 +362,7 @@ public class MemberController {
 			headers.add("Content-Type", "text/html; charset=UTF-8");
 
 			String str = JScript.back("비밀번호가 일치하지 않습니다.");
+			
 
 			return new ResponseEntity<String>(str, headers, HttpStatus.OK);
 		}
@@ -390,7 +391,7 @@ public class MemberController {
 		String str = JScript.href("회원정보 수정 완료", "/");
 
 		return new ResponseEntity<String>(str, headers, HttpStatus.OK);
-	}
+	} // modifyMember
 
 	@GetMapping("/remove")
 	public String removeMemberForm() {

@@ -6,9 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.domain.MemberVO;
 import com.example.mapper.MemberMapper;
+import com.example.mapper.ProfilePicMapper;
 import com.example.service.MemberService;
 
 public class MemberServiceProxy extends MemberService {
+
+	public MemberServiceProxy(MemberMapper memberMapper, ProfilePicMapper profilePicMapper) {
+		super(memberMapper, profilePicMapper);
+		// TODO Auto-generated constructor stub
+	}
 
 	// proxy pattern 원리
 	// 서비스 클래스를 상속 받아.
@@ -19,12 +25,7 @@ public class MemberServiceProxy extends MemberService {
 	
 	@Autowired
 	private LogAdvice logAdvice;
-	@Autowired
-	private MemberService memberService;
 	
-	public MemberServiceProxy(MemberMapper memberMapper) {
-		super(memberMapper);
-	}
 
 	@Override
 	public void register(MemberVO memberVO) {

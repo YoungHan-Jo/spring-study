@@ -13,7 +13,12 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +27,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.domain.AttachVO;
 import com.example.domain.BoardVO;
+import com.example.domain.Criteria;
+import com.example.domain.PageDTO;
 import com.example.service.AttachService;
 import com.example.service.BoardService;
 
@@ -131,12 +138,11 @@ public class BoardRestController {
 		return attachList;
 	} // uploadFilesAndGetAttachList
 
-	
 	// AJAX로 첨부파일을 업로드 하게 된다면,
 	// 대용량 파일이더라도 사용자가 기다리지 않아도 됨.
 	// 첨부파일 업로드와 함께 주글쓰기 처리
-	@PostMapping(value = "/boards/*", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-	public Map<String,Object> write(List<MultipartFile> files, BoardVO boardVO, HttpServletRequest request,
+	@PostMapping(value = "/boards/*", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public Map<String, Object> write(List<MultipartFile> files, BoardVO boardVO, HttpServletRequest request,
 			RedirectAttributes rttr) throws IllegalStateException, IOException {
 		// 스프링 웹에서는 클라이언트로부터 넘어오는 file타입의 input태그 요소의 갯수만큼
 		// MultipartFile 타입의 객체로 전달받게 됨.
@@ -163,15 +169,61 @@ public class BoardRestController {
 		boardService.addBoardAndAttaches(boardVO);
 
 		// =========================================================================
-		
+
 		BoardVO dbBoardVO = boardService.getBoardAndAttaches(num);
 
-		Map<String,Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("result", "success");
 		map.put("board", dbBoardVO);
-		
-		
+
 		return map;
 	} // write
+
+	@GetMapping(value = "/boards/{num}", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<Map<String, Object>> getBoardAndAttaches(@PathVariable("num") int num) {
+
+		BoardVO boardVO = boardService.getBoardByNum(num);
+		List<AttachVO> attachList = attachService.getAttachesByBno(num);
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("board", boardVO);
+		map.put("attachList", attachList);
+
+		return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
+
+	} // getBoardAndAttaches
+
+	@GetMapping(value = "/boards", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<Map<String, Object>> getBoardList() {
+
+		List<BoardVO> boardList = boardService.getBoardList();
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("boardList", boardList);
+		map.put("count", boardList.size());
+
+		return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
+
+	} // getBoardAndAttaches
+
+	@GetMapping(value = "/boards/pageNum/{pageNum}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<Map<String, Object>> getBoardsByPageNum(@PathVariable("pageNum") int pageNum) {
+
+		System.out.println("list() 호출됨...");
+
+		Criteria cri = new Criteria();
+
+		cri.setPageNum(pageNum);
+
+		List<BoardVO> boardList = boardService.getBoardsByCri(cri);
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("boardList", boardList);
+		map.put("count", boardList.size());
+
+		return new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
+	} // getBoardsByPageNum
 
 }

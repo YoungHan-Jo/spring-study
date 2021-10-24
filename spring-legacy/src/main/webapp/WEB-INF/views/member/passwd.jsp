@@ -104,7 +104,14 @@
 	    
 
 		$('form#frm').on('submit',function(event){
-			confirm("비밀번호를 변경하시겠습니까");
+			
+			var result = confirm("비밀번호를 변경하시겠습니까");
+			
+			if(result == false){
+				history.back();
+			}
+			
+	
 		})	
 	</script>
 </body>

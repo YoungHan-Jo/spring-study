@@ -57,8 +57,8 @@ table#board span.reply-level {
 										<div class="col s6 m4 l3 img-box">
 											<c:set var="fileCallPath"
 												value="${ attach.uploadpath }/s_${ attach.uuid }_${ attach.filename }" />
-											<img src="/display?fileName=${ fileCallPath }"
-												style="width: 80%;" />
+											<a href='/board/content?num=${ attach.bno }&pageNum=1'><img src="/display?fileName=${ fileCallPath }"
+												style="width: 80%;" /></a>
 										</div>
 									</c:forEach>
 								</c:when>
