@@ -43,8 +43,10 @@
 		</interceptor>
 		
 		<interceptor>
+			<mapping path="/gallery/*"/>
 			<mapping path="/member/*"/>
 			<mapping path="/board/*"/>
+			<exclude-mapping path="/gallery/list"/>
 			<exclude-mapping path="/member/login"/>
 			<exclude-mapping path="/member/join"/>
 			<exclude-mapping path="/board/list"/>
